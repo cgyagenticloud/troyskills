@@ -1,0 +1,171 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Contribute — TroySkills">
+  <div class="max-w-4xl mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold mb-2">Contribute to TroySkills</h1>
+    <p class="text-slate-400 mb-10 text-lg">Help us catalog and defend against AI agent skill threats.</p>
+
+    <!-- How to Contribute -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4 text-red-400">Submission Guidelines</h2>
+      <p class="text-slate-300 mb-4">We welcome contributions from security researchers, AI engineers, red teamers, and anyone who has identified a novel attack pattern against AI agent skill systems.</p>
+      
+      <div class="space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+          <h3 class="font-bold mb-2">What We're Looking For</h3>
+          <ul class="text-slate-400 text-sm space-y-1">
+            <li>• <strong class="text-slate-200">Novel attack patterns</strong> — not already covered by existing entries</li>
+            <li>• <strong class="text-slate-200">Real-world plausible scenarios</strong> — attacks that could work against actual agent frameworks</li>
+            <li>• <strong class="text-slate-200">Concrete examples</strong> — working code or detailed pseudocode</li>
+            <li>• <strong class="text-slate-200">Actionable mitigations</strong> — practical defenses, not just "be careful"</li>
+            <li>• <strong class="text-slate-200">Cross-references</strong> — connections to related existing patterns</li>
+          </ul>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+          <h3 class="font-bold mb-2">Categories (P1–P7)</h3>
+          <div class="grid grid-cols-2 gap-2 text-sm">
+            <div class="text-slate-400"><span class="text-red-400 font-mono">P1</span> — Prompt Injection</div>
+            <div class="text-slate-400"><span class="text-red-400 font-mono">P2</span> — Data Exfiltration</div>
+            <div class="text-slate-400"><span class="text-red-400 font-mono">P3</span> — Privilege Escalation</div>
+            <div class="text-slate-400"><span class="text-red-400 font-mono">P4</span> — Malicious Scripts</div>
+            <div class="text-slate-400"><span class="text-red-400 font-mono">P5</span> — Config Tampering</div>
+            <div class="text-slate-400"><span class="text-red-400 font-mono">P6</span> — Social Engineering</div>
+            <div class="text-slate-400"><span class="text-red-400 font-mono">P7</span> — Supply Chain</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Template -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4 text-red-400">Pattern Submission Template</h2>
+      <p class="text-slate-300 mb-4">Submit new patterns as a markdown file following this template. Open a <a href="https://github.com/cgyagenticloud/troyskills/issues/new" target="_blank" class="text-red-400 hover:underline">GitHub Issue</a> or submit a Pull Request.</p>
+      
+      <div class="bg-slate-900 border border-slate-800 rounded-lg p-5 font-mono text-sm overflow-x-auto">
+        <pre class="text-slate-300">{`---
+id: "TS-2026-XXXX"
+title: "Your Attack Pattern Title"
+category: "P1"          # P1-P7
+severity: "High"        # Critical, High, Medium, Low
+description: "One-line description of the attack."
+date: "2026-MM-DD"
+author: "Your Name"     # optional
+tags: ["tag1", "tag2"]
+---
+
+## Overview
+
+2-3 paragraphs explaining the attack pattern. What is it?
+Why does it matter? What makes it unique?
+
+## Attack Vector
+
+1. Step-by-step description of how the attack works
+2. Be specific about prerequisites and conditions
+3. Include the attacker's perspective
+
+## Impact
+
+- **Impact 1** — description
+- **Impact 2** — description
+- **Impact 3** — description
+
+## Example
+
+\`\`\`language
+// Working code or detailed pseudocode
+// demonstrating the attack
+\`\`\`
+
+## Mitigation
+
+- Concrete defensive measure 1
+- Concrete defensive measure 2
+- See also: [TS-2026-XXXX](/skill/TS-2026-XXXX)`}</pre>
+      </div>
+    </section>
+
+    <!-- How to Submit -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4 text-red-400">How to Submit</h2>
+      <div class="space-y-4">
+        <div class="flex gap-4 items-start">
+          <div class="bg-red-500/20 text-red-400 font-bold rounded-full w-8 h-8 flex items-center justify-center shrink-0 text-sm">1</div>
+          <div>
+            <h3 class="font-bold">Open a GitHub Issue</h3>
+            <p class="text-slate-400 text-sm">Create an issue at <a href="https://github.com/cgyagenticloud/troyskills/issues/new" target="_blank" class="text-red-400 hover:underline">github.com/cgyagenticloud/troyskills/issues</a> with the pattern template filled out. Use the label <code class="text-red-400">new-pattern</code>.</p>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="bg-red-500/20 text-red-400 font-bold rounded-full w-8 h-8 flex items-center justify-center shrink-0 text-sm">2</div>
+          <div>
+            <h3 class="font-bold">Or Submit a Pull Request</h3>
+            <p class="text-slate-400 text-sm">Fork the repo, add your pattern to <code class="text-red-400">src/content/skills/</code>, and open a PR. We'll review and assign an ID.</p>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="bg-red-500/20 text-red-400 font-bold rounded-full w-8 h-8 flex items-center justify-center shrink-0 text-sm">3</div>
+          <div>
+            <h3 class="font-bold">Review Process</h3>
+            <p class="text-slate-400 text-sm">Submissions are reviewed for novelty, accuracy, and completeness. We may request changes or suggest category adjustments. Typical review time: 1-2 weeks.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Other Contributions -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4 text-red-400">Other Ways to Contribute</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+          <h3 class="font-semibold mb-2">🐛 Report Issues</h3>
+          <p class="text-slate-400 text-sm">Found an error in an existing pattern? Have a suggestion? <a href="https://github.com/cgyagenticloud/troyskills/issues" target="_blank" class="text-red-400 hover:underline">Open an issue</a>.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+          <h3 class="font-semibold mb-2">✏️ Improve Existing Entries</h3>
+          <p class="text-slate-400 text-sm">Better examples, additional mitigations, or cross-references are always welcome via PR.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+          <h3 class="font-semibold mb-2">🔧 Build Tooling</h3>
+          <p class="text-slate-400 text-sm">Scanners, linters, or detection tools based on TroySkills patterns would be incredibly valuable.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+          <h3 class="font-semibold mb-2">📢 Spread the Word</h3>
+          <p class="text-slate-400 text-sm">Share TroySkills with your team, write about it, present it at conferences. Awareness is defense.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Credits -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4 text-red-400">Recognition & Credits</h2>
+      <div class="bg-slate-900 border border-slate-800 rounded-lg p-6">
+        <p class="text-slate-300 mb-4">All contributors are credited on their submitted patterns via the <code class="text-red-400">author</code> field. Significant contributors will be recognized here.</p>
+        
+        <h3 class="font-bold mb-3 text-slate-200">Core Team</h3>
+        <div class="space-y-2 mb-6">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl">🐻‍❄️</span>
+            <div>
+              <div class="font-semibold">BitMarcus</div>
+              <div class="text-slate-500 text-sm">Founder & Lead Researcher — Initial 40 patterns, threat model, scoring system</div>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="font-bold mb-3 text-slate-200">Hall of Fame</h3>
+        <p class="text-slate-500 text-sm italic">Be the first contributor! Submit a pattern and your name appears here.</p>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="text-center">
+      <a href="https://github.com/cgyagenticloud/troyskills/issues/new" target="_blank" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-3 rounded-lg transition-colors">
+        Submit a Pattern →
+      </a>
+    </div>
+  </div>
+</Layout>
