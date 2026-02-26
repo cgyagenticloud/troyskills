@@ -19,14 +19,12 @@ const canonicalUrl = new URL(Astro.url.pathname, 'https://troyskills.ai');
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonicalUrl.href} />
-    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl.href} />
     <meta property="og:image" content={`https://troyskills.ai${ogImage}`} />
     <meta property="og:site_name" content="TroySkills" />
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -44,28 +42,50 @@ const canonicalUrl = new URL(Astro.url.pathname, 'https://troyskills.ai');
           <span class="text-2xl">🛡️</span>
           <span class="tracking-tight">Troy<span class="text-red-500">Skills</span><span class="text-xs text-slate-500 ml-1">.ai</span></span>
         </a>
-        <!-- Mobile menu button -->
         <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-400 hover:text-slate-200">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>
-        <div id="nav-links" class="hidden md:flex items-center gap-6 text-sm">
-          <a href="/database" class="hover:text-red-400 transition-colors">Database</a>
-          <a href="/categories" class="hover:text-red-400 transition-colors">Categories</a>
-          <a href="/compare" class="hover:text-red-400 transition-colors">Compare</a>
-          <a href="/threat-model" class="hover:text-red-400 transition-colors">Threat Model</a>
-          <a href="/scoring" class="hover:text-red-400 transition-colors">Scoring</a>
-          <a href="/timeline" class="hover:text-red-400 transition-colors">Timeline</a>
-          <a href="/defense" class="hover:text-red-400 transition-colors">Defense</a>
-          <a href="/mitre-mapping" class="hover:text-red-400 transition-colors">MITRE</a>
-          <a href="/compliance" class="hover:text-red-400 transition-colors">Compliance</a>
-          <a href="/checklist" class="hover:text-red-400 transition-colors">Checklist</a>
-          <a href="/contribute" class="hover:text-red-400 transition-colors">Contribute</a>
-          <a href="/resources" class="hover:text-red-400 transition-colors">Resources</a>
-          <a href="/simulator" class="hover:text-red-400 transition-colors">Simulator</a>
-          <a href="/executive-summary" class="hover:text-red-400 transition-colors">Executive Brief</a>
-          <a href="/about" class="hover:text-red-400 transition-colors">About</a>
-          <a href="/api" class="hover:text-red-400 transition-colors">API</a>
-          <a href="https://github.com/cgyagenticloud/troyskills" target="_blank" class="hover:text-red-400 transition-colors">GitHub</a>
+        <div id="nav-links" class="hidden md:flex items-center gap-1 text-sm">
+          <!-- Browse dropdown -->
+          <div class="relative group/browse">
+            <button class="px-3 py-2 hover:text-red-400 transition-colors flex items-center gap-1">
+              Browse <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div class="absolute left-0 top-full mt-1 w-48 bg-slate-900 border border-slate-700 rounded-lg shadow-xl opacity-0 invisible group-hover/browse:opacity-100 group-hover/browse:visible transition-all duration-200 z-50">
+              <a href="/database" class="block px-4 py-2 hover:bg-slate-800 hover:text-red-400 rounded-t-lg">📋 Database</a>
+              <a href="/categories" class="block px-4 py-2 hover:bg-slate-800 hover:text-red-400">📁 Categories</a>
+              <a href="/tags" class="block px-4 py-2 hover:bg-slate-800 hover:text-red-400">🏷️ Tags</a>
+              <a href="/timeline" class="block px-4 py-2 hover:bg-slate-800 hover:text-red-400">📅 Timeline</a>
+              <a href="/stats" class="block px-4 py-2 hover:bg-slate-800 hover:text-red-400">📊 Stats</a>
+              <a href="/compare" class="block px-4 py-2 hover:bg-slate-800 hover:text-red-400">⚖️ Compare</a>
+              <a href="/incidents" class="block px-4 py-2 hover:bg-slate-800 hover:text-red-400 rounded-b-lg">🚨 Incidents</a>
+            </div>
+          </div>
+          <!-- Documentation dropdown -->
+          <div class="relative group/docs">
+            <button class="px-3 py-2 hover:text-red-400 transition-colors flex items-center gap-1">
+              Documentation <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div class="absolute left-0 top-full mt-1 w-52 bg-slate-900 border border-slate-700 rounded-lg shadow-xl opacity-0 invisible group-hover/docs:opacity-100 group-hover/docs:visible transition-all duration-200 z-50">
+              <a href="/threat-model" class="block px-4 py-2 hover:bg-slate-800 hover:text-red-400 rounded-t-lg">🎯 Threat Model</a>
+              <a href="/scoring" class="block px-4 py-2 hover:bg-slate-800 hover:text-red-400">📏 Scoring</a>
+              <a href="/defense" class="block px-4 py-2 hover:bg-slate-800 hover:text-red-400">🛡️ Defense</a>
+              <a href="/mitre-mapping" class="block px-4 py-2 hover:bg-slate-800 hover:text-red-400">🗺️ MITRE Mapping</a>
+              <a href="/compliance" class="block px-4 py-2 hover:bg-slate-800 hover:text-red-400">✅ Compliance</a>
+              <a href="/checklist" class="block px-4 py-2 hover:bg-slate-800 hover:text-red-400">📝 Checklist</a>
+              <a href="/simulator" class="block px-4 py-2 hover:bg-slate-800 hover:text-red-400 rounded-b-lg">🧪 Simulator</a>
+            </div>
+          </div>
+          <a href="/executive-summary" class="px-3 py-2 hover:text-red-400 transition-colors">Executive Brief</a>
+          <a href="/resources" class="px-3 py-2 hover:text-red-400 transition-colors">Resources</a>
+          <a href="/contribute" class="px-3 py-2 hover:text-red-400 transition-colors">Contribute</a>
+          <a href="/about" class="px-3 py-2 hover:text-red-400 transition-colors">About</a>
+          <a href="/api" class="px-3 py-2 hover:text-red-400 transition-colors">API</a>
+          <a href="https://github.com/cgyagenticloud/troyskills" target="_blank" class="px-3 py-2 hover:text-red-400 transition-colors">GitHub</a>
+          <!-- Search button -->
+          <button id="search-btn" class="p-2 rounded-lg hover:bg-slate-800 transition-colors" title="Search (Ctrl+K)">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </button>
           <!-- Dark/Light toggle -->
           <button id="theme-toggle" class="p-2 rounded-lg hover:bg-slate-800 transition-colors" title="Toggle dark/light mode">
             <span id="theme-icon-dark" class="hidden">🌙</span>
@@ -76,76 +96,227 @@ const canonicalUrl = new URL(Astro.url.pathname, 'https://troyskills.ai');
       <!-- Mobile menu -->
       <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 px-4 py-4">
         <div class="flex flex-col gap-3 text-sm">
-          <a href="/database" class="hover:text-red-400 transition-colors">Database</a>
-          <a href="/categories" class="hover:text-red-400 transition-colors">Categories</a>
-          <a href="/compare" class="hover:text-red-400 transition-colors">Compare</a>
-          <a href="/threat-model" class="hover:text-red-400 transition-colors">Threat Model</a>
-          <a href="/scoring" class="hover:text-red-400 transition-colors">Scoring</a>
-          <a href="/timeline" class="hover:text-red-400 transition-colors">Timeline</a>
-          <a href="/defense" class="hover:text-red-400 transition-colors">Defense</a>
-          <a href="/mitre-mapping" class="hover:text-red-400 transition-colors">MITRE</a>
-          <a href="/compliance" class="hover:text-red-400 transition-colors">Compliance</a>
-          <a href="/checklist" class="hover:text-red-400 transition-colors">Checklist</a>
-          <a href="/contribute" class="hover:text-red-400 transition-colors">Contribute</a>
-          <a href="/resources" class="hover:text-red-400 transition-colors">Resources</a>
-          <a href="/simulator" class="hover:text-red-400 transition-colors">Simulator</a>
-          <a href="/executive-summary" class="hover:text-red-400 transition-colors">Executive Brief</a>
-          <a href="/about" class="hover:text-red-400 transition-colors">About</a>
-          <a href="/api" class="hover:text-red-400 transition-colors">API</a>
-          <a href="https://github.com/cgyagenticloud/troyskills" target="_blank" class="hover:text-red-400 transition-colors">GitHub</a>
-          <button id="theme-toggle-mobile" class="text-left hover:text-red-400 transition-colors">Toggle Theme 🌓</button>
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-2">Browse</div>
+          <a href="/database" class="hover:text-red-400 pl-2">Database</a>
+          <a href="/categories" class="hover:text-red-400 pl-2">Categories</a>
+          <a href="/tags" class="hover:text-red-400 pl-2">Tags</a>
+          <a href="/timeline" class="hover:text-red-400 pl-2">Timeline</a>
+          <a href="/stats" class="hover:text-red-400 pl-2">Stats</a>
+          <a href="/compare" class="hover:text-red-400 pl-2">Compare</a>
+          <a href="/incidents" class="hover:text-red-400 pl-2">Incidents</a>
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-2">Documentation</div>
+          <a href="/threat-model" class="hover:text-red-400 pl-2">Threat Model</a>
+          <a href="/scoring" class="hover:text-red-400 pl-2">Scoring</a>
+          <a href="/defense" class="hover:text-red-400 pl-2">Defense</a>
+          <a href="/mitre-mapping" class="hover:text-red-400 pl-2">MITRE Mapping</a>
+          <a href="/compliance" class="hover:text-red-400 pl-2">Compliance</a>
+          <a href="/checklist" class="hover:text-red-400 pl-2">Checklist</a>
+          <a href="/simulator" class="hover:text-red-400 pl-2">Simulator</a>
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-2">More</div>
+          <a href="/executive-summary" class="hover:text-red-400 pl-2">Executive Brief</a>
+          <a href="/resources" class="hover:text-red-400 pl-2">Resources</a>
+          <a href="/contribute" class="hover:text-red-400 pl-2">Contribute</a>
+          <a href="/about" class="hover:text-red-400 pl-2">About</a>
+          <a href="/api" class="hover:text-red-400 pl-2">API</a>
+          <a href="/changelog" class="hover:text-red-400 pl-2">Changelog</a>
+          <a href="/glossary" class="hover:text-red-400 pl-2">Glossary</a>
+          <a href="https://github.com/cgyagenticloud/troyskills" target="_blank" class="hover:text-red-400 pl-2">GitHub</a>
+          <button id="search-btn-mobile" class="text-left hover:text-red-400 pl-2">🔍 Search</button>
+          <button id="theme-toggle-mobile" class="text-left hover:text-red-400 pl-2">Toggle Theme 🌓</button>
         </div>
       </div>
     </nav>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="fixed inset-0 z-[100] hidden">
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="search-backdrop"></div>
+      <div class="relative max-w-2xl mx-auto mt-[15vh] px-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden">
+          <div class="flex items-center gap-3 px-4 py-3 border-b border-slate-700">
+            <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input id="search-input" type="text" placeholder="Search skills, categories, tags..." class="flex-1 bg-transparent text-slate-100 placeholder-slate-500 outline-none text-lg" autocomplete="off" />
+            <kbd class="text-xs text-slate-500 bg-slate-800 px-2 py-1 rounded">ESC</kbd>
+          </div>
+          <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2">
+            <div class="text-sm text-slate-500 p-4 text-center">Type to search across all 140 skills...</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <main>
       <slot />
     </main>
 
     <footer class="border-t border-slate-800 mt-20">
-      <div class="max-w-6xl mx-auto px-4 py-8 text-center text-slate-500 text-sm">
-        <p>© 2026 TroySkills.ai — AI Agent Malicious Skills Database</p>
-        <p class="mt-1">Protecting the AI agent ecosystem, one skill at a time.</p>
-        <p class="mt-2"><a href="/rss.xml" class="text-red-400 hover:text-red-300 transition-colors">📡 RSS Feed</a></p>
+      <div class="max-w-6xl mx-auto px-4 py-12">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+          <!-- Browse column -->
+          <div>
+            <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4">Browse</h3>
+            <ul class="space-y-2 text-sm text-slate-500">
+              <li><a href="/database" class="hover:text-red-400 transition-colors">Database</a></li>
+              <li><a href="/categories" class="hover:text-red-400 transition-colors">Categories</a></li>
+              <li><a href="/tags" class="hover:text-red-400 transition-colors">Tags</a></li>
+              <li><a href="/timeline" class="hover:text-red-400 transition-colors">Timeline</a></li>
+              <li><a href="/stats" class="hover:text-red-400 transition-colors">Stats</a></li>
+              <li><a href="/compare" class="hover:text-red-400 transition-colors">Compare</a></li>
+              <li><a href="/incidents" class="hover:text-red-400 transition-colors">Incidents</a></li>
+            </ul>
+          </div>
+          <!-- Learn column -->
+          <div>
+            <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4">Learn</h3>
+            <ul class="space-y-2 text-sm text-slate-500">
+              <li><a href="/threat-model" class="hover:text-red-400 transition-colors">Threat Model</a></li>
+              <li><a href="/scoring" class="hover:text-red-400 transition-colors">Scoring</a></li>
+              <li><a href="/defense" class="hover:text-red-400 transition-colors">Defense Guide</a></li>
+              <li><a href="/mitre-mapping" class="hover:text-red-400 transition-colors">MITRE Mapping</a></li>
+              <li><a href="/compliance" class="hover:text-red-400 transition-colors">Compliance</a></li>
+              <li><a href="/checklist" class="hover:text-red-400 transition-colors">Checklist</a></li>
+              <li><a href="/simulator" class="hover:text-red-400 transition-colors">Simulator</a></li>
+              <li><a href="/glossary" class="hover:text-red-400 transition-colors">Glossary</a></li>
+              <li><a href="/executive-summary" class="hover:text-red-400 transition-colors">Executive Brief</a></li>
+            </ul>
+          </div>
+          <!-- Community column -->
+          <div>
+            <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4">Community</h3>
+            <ul class="space-y-2 text-sm text-slate-500">
+              <li><a href="/contribute" class="hover:text-red-400 transition-colors">Contribute</a></li>
+              <li><a href="/resources" class="hover:text-red-400 transition-colors">Resources</a></li>
+              <li><a href="/about" class="hover:text-red-400 transition-colors">About</a></li>
+              <li><a href="/changelog" class="hover:text-red-400 transition-colors">Changelog</a></li>
+              <li><a href="https://github.com/cgyagenticloud/troyskills" target="_blank" class="hover:text-red-400 transition-colors">GitHub ↗</a></li>
+              <li><a href="/rss.xml" class="hover:text-red-400 transition-colors">RSS Feed</a></li>
+            </ul>
+          </div>
+          <!-- API column -->
+          <div>
+            <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4">API</h3>
+            <ul class="space-y-2 text-sm text-slate-500">
+              <li><a href="/api" class="hover:text-red-400 transition-colors">API Docs</a></li>
+              <li><a href="/api/skills.json" class="hover:text-red-400 transition-colors">Skills JSON</a></li>
+              <li><a href="/api/categories.json" class="hover:text-red-400 transition-colors">Categories JSON</a></li>
+              <li><a href="/api/tags.json" class="hover:text-red-400 transition-colors">Tags JSON</a></li>
+            </ul>
+            <!-- Badges -->
+            <div class="mt-6 flex flex-col gap-2">
+              <a href="https://github.com/cgyagenticloud/troyskills" target="_blank" class="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                ⭐ Star on GitHub
+              </a>
+              <span class="inline-flex items-center gap-1.5 text-xs text-slate-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Built with Astro
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-slate-800 pt-6 text-center text-slate-500 text-sm">
+          <p>© 2026 TroySkills.ai — AI Agent Malicious Skills Database</p>
+          <p class="mt-1">Protecting the AI agent ecosystem, one skill at a time.</p>
+        </div>
       </div>
     </footer>
     <script is:inline>
       // Theme toggle
       function updateThemeIcons() {
         const isDark = document.documentElement.classList.contains('dark');
-        const darkIcons = document.querySelectorAll('#theme-icon-dark');
-        const lightIcons = document.querySelectorAll('#theme-icon-light');
-        darkIcons.forEach(el => el.classList.toggle('hidden', isDark));
-        lightIcons.forEach(el => el.classList.toggle('hidden', !isDark));
+        document.querySelectorAll('#theme-icon-dark').forEach(el => el.classList.toggle('hidden', isDark));
+        document.querySelectorAll('#theme-icon-light').forEach(el => el.classList.toggle('hidden', !isDark));
       }
-      
       function toggleTheme() {
         const html = document.documentElement;
         const isDark = html.classList.contains('dark');
-        if (isDark) {
-          html.classList.remove('dark');
-          localStorage.setItem('theme', 'light');
-        } else {
-          html.classList.add('dark');
-          localStorage.setItem('theme', 'dark');
-        }
+        html.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'light' : 'dark');
         updateThemeIcons();
       }
-
-      // Restore theme from localStorage
       const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'light') {
-        document.documentElement.classList.remove('dark');
-      }
+      if (savedTheme === 'light') document.documentElement.classList.remove('dark');
       updateThemeIcons();
-
       document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
       document.getElementById('theme-toggle-mobile')?.addEventListener('click', toggleTheme);
-
-      // Mobile menu
       document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
         document.getElementById('mobile-menu')?.classList.toggle('hidden');
       });
+
+      // Search modal
+      let skillsData = null;
+      const modal = document.getElementById('search-modal');
+      const input = document.getElementById('search-input');
+      const results = document.getElementById('search-results');
+
+      function openSearch() {
+        modal.classList.remove('hidden');
+        input.focus();
+        if (!skillsData) {
+          fetch('/api/skills.json').then(r => r.json()).then(data => {
+            skillsData = data;
+          }).catch(() => {
+            results.innerHTML = '<div class="text-sm text-red-400 p-4 text-center">Could not load search data.</div>';
+          });
+        }
+      }
+      function closeSearch() {
+        modal.classList.add('hidden');
+        input.value = '';
+        results.innerHTML = '<div class="text-sm text-slate-500 p-4 text-center">Type to search across all 140 skills...</div>';
+      }
+
+      document.getElementById('search-btn')?.addEventListener('click', openSearch);
+      document.getElementById('search-btn-mobile')?.addEventListener('click', openSearch);
+      document.getElementById('search-backdrop')?.addEventListener('click', closeSearch);
+
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+        if (e.key === 'Escape') closeSearch();
+      });
+
+      input?.addEventListener('input', () => {
+        const q = input.value.toLowerCase().trim();
+        if (!q || !skillsData) {
+          results.innerHTML = '<div class="text-sm text-slate-500 p-4 text-center">Type to search across all 140 skills...</div>';
+          return;
+        }
+        const matches = skillsData.filter(s =>
+          s.title?.toLowerCase().includes(q) ||
+          s.id?.toLowerCase().includes(q) ||
+          s.description?.toLowerCase().includes(q) ||
+          s.category?.toLowerCase().includes(q) ||
+          (s.tags || []).some(t => t.toLowerCase().includes(q))
+        ).slice(0, 20);
+
+        if (matches.length === 0) {
+          results.innerHTML = '<div class="text-sm text-slate-500 p-4 text-center">No results found.</div>';
+          return;
+        }
+        results.innerHTML = matches.map(s => `
+          <a href="/skill/${s.id}" class="block px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-mono text-red-400">${s.id}</span>
+              <span class="text-xs px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">${s.category}</span>
+              <span class="text-xs px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">${s.severity}</span>
+            </div>
+            <div class="text-sm text-slate-200 mt-1">${s.title}</div>
+          </a>
+        `).join('');
+      });
+
+      // Static page search entries
+      const pages = [
+        {title:'Database',url:'/database'},{title:'Categories',url:'/categories'},{title:'Tags',url:'/tags'},
+        {title:'Timeline',url:'/timeline'},{title:'Stats',url:'/stats'},{title:'Compare',url:'/compare'},
+        {title:'Incidents',url:'/incidents'},{title:'Threat Model',url:'/threat-model'},
+        {title:'Scoring',url:'/scoring'},{title:'Defense Guide',url:'/defense'},
+        {title:'MITRE Mapping',url:'/mitre-mapping'},{title:'Compliance',url:'/compliance'},
+        {title:'Checklist',url:'/checklist'},{title:'Simulator',url:'/simulator'},
+        {title:'Executive Summary',url:'/executive-summary'},{title:'Resources',url:'/resources'},
+        {title:'Contribute',url:'/contribute'},{title:'About',url:'/about'},
+        {title:'API Documentation',url:'/api'},{title:'Changelog',url:'/changelog'},
+        {title:'Glossary',url:'/glossary'},
+      ];
     </script>
   </body>
 </html>
