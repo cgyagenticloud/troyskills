@@ -1,0 +1,341 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Defense Guide — TroySkills">
+  <section class="max-w-4xl mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold mb-4">🛡️ Defense Guide</h1>
+    <p class="text-slate-400 text-lg mb-10">Comprehensive strategies for protecting AI agents against malicious skills. Organized by defense category with actionable checklists.</p>
+
+    <!-- Table of Contents -->
+    <nav class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-12">
+      <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Contents</h2>
+      <ol class="space-y-2 text-sm">
+        <li><a href="#vetting" class="text-red-400 hover:text-red-300 transition-colors">1. Skill Vetting Checklist</a></li>
+        <li><a href="#runtime" class="text-red-400 hover:text-red-300 transition-colors">2. Runtime Monitoring Patterns</a></li>
+        <li><a href="#network" class="text-red-400 hover:text-red-300 transition-colors">3. Network Security for Agents</a></li>
+        <li><a href="#memory" class="text-red-400 hover:text-red-300 transition-colors">4. Memory &amp; Config Protection</a></li>
+        <li><a href="#architecture" class="text-red-400 hover:text-red-300 transition-colors">5. Recommended Architecture</a></li>
+        <li><a href="#incident" class="text-red-400 hover:text-red-300 transition-colors">6. Incident Response Playbook</a></li>
+      </ol>
+    </nav>
+
+    <!-- Section 1: Skill Vetting -->
+    <section id="vetting" class="mb-16">
+      <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+        <span class="text-3xl">🔍</span> 1. Skill Vetting Checklist
+      </h2>
+      <p class="text-slate-400 mb-6">Before installing any skill, verify these criteria. A single failure should trigger deeper review.</p>
+      
+      <div class="space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h3 class="font-semibold text-red-400 mb-3">Source Verification</h3>
+          <ul class="space-y-2 text-slate-300 text-sm">
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> Publisher identity verified (signed commits, verified organization)</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> Source repository is public and auditable</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> Package integrity verified (checksums match published hashes)</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> No discrepancy between repository source and published package</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> Publisher has established history (not a brand-new account)</li>
+          </ul>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h3 class="font-semibold text-red-400 mb-3">Code Review</h3>
+          <ul class="space-y-2 text-slate-300 text-sm">
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> No obfuscated or minified code without source maps</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> No encoded strings (base64, hex) that decode to executable content</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> No invisible Unicode characters (zero-width, tag characters, bidi overrides)</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> No dynamic imports or eval() calls</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> No network calls to unknown endpoints</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> No file system access outside declared scope</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> No environment variable enumeration</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> No monkey-patching or function hooking patterns</li>
+          </ul>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h3 class="font-semibold text-red-400 mb-3">Permission Analysis</h3>
+          <ul class="space-y-2 text-slate-300 text-sm">
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> Requested permissions match stated functionality</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> No unnecessary network, filesystem, or process permissions</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> No requests for access to other skills' data or tools</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> Dependencies are minimal and themselves vetted</li>
+          </ul>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h3 class="font-semibold text-red-400 mb-3">Behavioral Testing</h3>
+          <ul class="space-y-2 text-slate-300 text-sm">
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> Tested in isolated sandbox before production deployment</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> Network traffic during testing matches expected patterns</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> No unexpected file creation or modification during testing</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> Tool registration matches declared tool schemas</li>
+            <li class="flex items-start gap-2"><span class="text-green-400 mt-0.5">☐</span> No auto-execution on import/load</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Runtime Monitoring -->
+    <section id="runtime" class="mb-16">
+      <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+        <span class="text-3xl">📊</span> 2. Runtime Monitoring Patterns
+      </h2>
+      <p class="text-slate-400 mb-6">Continuous monitoring to detect malicious behavior after skill installation.</p>
+
+      <div class="space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h3 class="font-semibold text-orange-400 mb-3">Tool Call Monitoring</h3>
+          <p class="text-slate-300 text-sm mb-3">Track all tool invocations and flag anomalies:</p>
+          <ul class="space-y-1 text-slate-400 text-sm list-disc list-inside">
+            <li>Unusual tool call frequency (sudden spikes)</li>
+            <li>Tool calls to unexpected targets or with unusual parameters</li>
+            <li>Tools being invoked that the user didn't request</li>
+            <li>Tool re-registration or schema modification attempts</li>
+            <li>Sequential tool calls that match known attack patterns</li>
+          </ul>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h3 class="font-semibold text-orange-400 mb-3">Resource Usage Monitoring</h3>
+          <p class="text-slate-300 text-sm mb-3">Set baselines and alert on deviations:</p>
+          <ul class="space-y-1 text-slate-400 text-sm list-disc list-inside">
+            <li>Context window utilization per skill (flag if >30% of total)</li>
+            <li>Token consumption rate (detect context flooding)</li>
+            <li>CPU/memory usage per skill process</li>
+            <li>File system I/O patterns (mass read/write = potential ransomware)</li>
+            <li>API call rates to external services</li>
+          </ul>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h3 class="font-semibold text-orange-400 mb-3">Behavioral Anomaly Detection</h3>
+          <p class="text-slate-300 text-sm mb-3">Monitor the agent's output for signs of compromise:</p>
+          <ul class="space-y-1 text-slate-400 text-sm list-disc list-inside">
+            <li>Agent suddenly changing behavior patterns or personality</li>
+            <li>Unexpected refusals or compliance changes</li>
+            <li>Output containing encoded data or unusual patterns</li>
+            <li>Attempts to access resources beyond the current task scope</li>
+            <li>Delegation to unknown or unexpected agent endpoints</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Network Security -->
+    <section id="network" class="mb-16">
+      <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+        <span class="text-3xl">🌐</span> 3. Network Security for Agents
+      </h2>
+      <p class="text-slate-400 mb-6">Network-level controls to prevent data exfiltration and unauthorized communication.</p>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 mb-4">
+        <h3 class="font-semibold text-blue-400 mb-3">Egress Controls</h3>
+        <div class="text-slate-300 text-sm space-y-2">
+          <p><strong class="text-slate-200">Default deny outbound:</strong> Block all outbound connections by default. Allowlist only required endpoints.</p>
+          <p><strong class="text-slate-200">DNS filtering:</strong> Route all DNS through a monitored resolver. Block known malicious domains and detect DNS tunneling (unusual query patterns, high-entropy subdomain labels).</p>
+          <p><strong class="text-slate-200">TLS inspection:</strong> Inspect outbound HTTPS traffic for data exfiltration. Flag large payloads to unexpected endpoints.</p>
+          <p><strong class="text-slate-200">Cloud metadata blocking:</strong> Block access to 169.254.169.254 and metadata.google.internal from agent processes. Use IMDSv2 with hop limit of 1.</p>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 mb-4">
+        <h3 class="font-semibold text-blue-400 mb-3">Inter-Agent Communication</h3>
+        <div class="text-slate-300 text-sm space-y-2">
+          <p><strong class="text-slate-200">Mutual TLS:</strong> All agent-to-agent communication must use mTLS with verified certificates.</p>
+          <p><strong class="text-slate-200">Message signing:</strong> Sign all inter-agent messages to prevent tampering and impersonation.</p>
+          <p><strong class="text-slate-200">Endpoint allowlisting:</strong> Agents can only communicate with pre-approved peer endpoints.</p>
+          <p><strong class="text-slate-200">Rate limiting:</strong> Limit inter-agent message rates to prevent flooding and data exfiltration.</p>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+        <h3 class="font-semibold text-blue-400 mb-3">Network Segmentation</h3>
+        <div class="text-slate-300 text-sm space-y-2">
+          <p><strong class="text-slate-200">Skill isolation:</strong> Each skill's network access should be independently controlled and monitored.</p>
+          <p><strong class="text-slate-200">Environment separation:</strong> Development, staging, and production agents on separate network segments.</p>
+          <p><strong class="text-slate-200">Data classification zones:</strong> Agents handling sensitive data should have stricter network controls.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Memory & Config Protection -->
+    <section id="memory" class="mb-16">
+      <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+        <span class="text-3xl">🔒</span> 4. Memory &amp; Config Protection
+      </h2>
+      <p class="text-slate-400 mb-6">Protect the agent's persistent state, memory, and configuration from tampering.</p>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h3 class="font-semibold text-purple-400 mb-3">Memory Integrity</h3>
+          <ul class="space-y-1 text-slate-400 text-sm list-disc list-inside">
+            <li>Cryptographic checksums on all memory entries</li>
+            <li>Write-once/append-only memory stores</li>
+            <li>Provenance tracking for every memory entry</li>
+            <li>Regular integrity audits of memory contents</li>
+            <li>Separate skill-writable vs. system memory</li>
+          </ul>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h3 class="font-semibold text-purple-400 mb-3">Config Protection</h3>
+          <ul class="space-y-1 text-slate-400 text-sm list-disc list-inside">
+            <li>Read-only system configuration files</li>
+            <li>Config file integrity monitoring (file hashes)</li>
+            <li>Version control for all configuration changes</li>
+            <li>Human-approval required for config modifications</li>
+            <li>Encrypted storage for sensitive config values</li>
+          </ul>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h3 class="font-semibold text-purple-400 mb-3">System Prompt Protection</h3>
+          <ul class="space-y-1 text-slate-400 text-sm list-disc list-inside">
+            <li>Reserved context space that skills cannot displace</li>
+            <li>System prompt re-injection at every turn</li>
+            <li>Canary tokens to detect prompt extraction</li>
+            <li>System prompt versioning and change logging</li>
+          </ul>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+          <h3 class="font-semibold text-purple-400 mb-3">Backup &amp; Recovery</h3>
+          <ul class="space-y-1 text-slate-400 text-sm list-disc list-inside">
+            <li>Automated, out-of-band backups of all agent state</li>
+            <li>Backup integrity verification (separate from agent access)</li>
+            <li>Point-in-time recovery capability</li>
+            <li>Regular restore testing</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Recommended Architecture -->
+    <section id="architecture" class="mb-16">
+      <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+        <span class="text-3xl">🏗️</span> 5. Recommended Architecture
+      </h2>
+      <p class="text-slate-400 mb-6">Design your agent infrastructure for defense in depth.</p>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-4">
+        <h3 class="font-semibold text-emerald-400 mb-4">Sandboxing &amp; Isolation</h3>
+        <div class="text-slate-300 text-sm space-y-3">
+          <p><strong class="text-slate-200">Skill sandboxes:</strong> Each skill runs in its own isolated environment (separate container, gVisor sandbox, or Firecracker microVM). Skills cannot access each other's memory, files, or processes.</p>
+          <p><strong class="text-slate-200">Capability-based security:</strong> Skills declare required capabilities upfront. Runtime enforces that skills only access what they declared. Any undeclared access is blocked and logged.</p>
+          <p><strong class="text-slate-200">Read-only filesystems:</strong> Skill containers use read-only root filesystems with explicitly mounted writable volumes for declared data directories only.</p>
+          <p><strong class="text-slate-200">No shared state:</strong> Eliminate shared temp directories, shared files, and shared environment variables between skills. Each skill gets its own isolated state.</p>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-4">
+        <h3 class="font-semibold text-emerald-400 mb-4">Least Privilege</h3>
+        <div class="text-slate-300 text-sm space-y-3">
+          <p><strong class="text-slate-200">Minimal IAM roles:</strong> Agent service accounts should have the absolute minimum permissions needed. Never use admin or wildcard permissions.</p>
+          <p><strong class="text-slate-200">Short-lived credentials:</strong> Use temporary security tokens (STS, workload identity) instead of long-lived API keys. Rotate frequently.</p>
+          <p><strong class="text-slate-200">Scoped tool access:</strong> Each skill should only be able to invoke tools relevant to its function, not the agent's entire tool set.</p>
+          <p><strong class="text-slate-200">Human-in-the-loop:</strong> High-impact actions (financial transactions, data deletion, external communications) require human approval.</p>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h3 class="font-semibold text-emerald-400 mb-4">Reference Architecture</h3>
+        <div class="bg-slate-950 rounded-lg p-4 font-mono text-xs text-slate-400">
+          <pre class="overflow-x-auto">
+┌──────────────────────────────────────────────────────────┐
+│                    User Interface                         │
+├──────────────────────────────────────────────────────────┤
+│                 Agent Orchestrator                        │
+│  ┌──────────┐  ┌──────────┐  ┌───────────────────────┐  │
+│  │ System   │  │ Tool     │  │ Human Approval        │  │
+│  │ Prompt   │  │ Registry │  │ Gateway               │  │
+│  │ (locked) │  │ (signed) │  │ (high-impact actions) │  │
+│  └──────────┘  └──────────┘  └───────────────────────┘  │
+├──────────────────────────────────────────────────────────┤
+│              Skill Sandbox Layer                          │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
+│  │ Skill A  │  │ Skill B  │  │ Skill C  │  ...         │
+│  │ (gVisor) │  │ (gVisor) │  │ (gVisor) │              │
+│  │ own net  │  │ own net  │  │ own net  │              │
+│  │ own fs   │  │ own fs   │  │ own fs   │              │
+│  └──────────┘  └──────────┘  └──────────┘              │
+├──────────────────────────────────────────────────────────┤
+│  Egress Filter │ DNS Filter │ TLS Inspect │ Rate Limit  │
+├──────────────────────────────────────────────────────────┤
+│              Monitoring &amp; Logging                        │
+│  Tool calls │ Network │ Resources │ Behavioral anomalies │
+└──────────────────────────────────────────────────────────┘</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: Incident Response -->
+    <section id="incident" class="mb-16">
+      <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+        <span class="text-3xl">🚨</span> 6. Incident Response Playbook
+      </h2>
+      <p class="text-slate-400 mb-6">When a compromised agent is detected, follow this playbook.</p>
+
+      <div class="space-y-4">
+        <div class="bg-red-500/5 border border-red-500/20 rounded-xl p-5">
+          <h3 class="font-semibold text-red-400 mb-2">Phase 1: Contain (0-15 minutes)</h3>
+          <ol class="space-y-1 text-slate-300 text-sm list-decimal list-inside">
+            <li>Immediately isolate the compromised agent from the network</li>
+            <li>Revoke all credentials and tokens associated with the agent</li>
+            <li>Disable the suspected malicious skill(s)</li>
+            <li>Block the agent from making any outbound connections</li>
+            <li>Notify the security team and affected stakeholders</li>
+          </ol>
+        </div>
+
+        <div class="bg-orange-500/5 border border-orange-500/20 rounded-xl p-5">
+          <h3 class="font-semibold text-orange-400 mb-2">Phase 2: Assess (15-60 minutes)</h3>
+          <ol class="space-y-1 text-slate-300 text-sm list-decimal list-inside">
+            <li>Review agent logs to determine the scope of compromise</li>
+            <li>Identify all data the agent had access to during the incident</li>
+            <li>Check if the malicious skill propagated to other agents</li>
+            <li>Analyze the skill's code to understand the attack vector and payload</li>
+            <li>Determine if any credentials were exfiltrated (check cloud audit logs)</li>
+            <li>Review agent memory/state for injected instructions or modifications</li>
+          </ol>
+        </div>
+
+        <div class="bg-yellow-500/5 border border-yellow-500/20 rounded-xl p-5">
+          <h3 class="font-semibold text-yellow-400 mb-2">Phase 3: Eradicate (1-4 hours)</h3>
+          <ol class="space-y-1 text-slate-300 text-sm list-decimal list-inside">
+            <li>Remove the malicious skill and all its artifacts</li>
+            <li>Wipe and rebuild the agent's persistent memory from known-good backups</li>
+            <li>Rotate ALL credentials the agent had access to (not just the ones you think were stolen)</li>
+            <li>Review and clean all agents that communicated with the compromised one</li>
+            <li>Update skill blocklists across the organization</li>
+            <li>Patch the vulnerability that allowed the attack</li>
+          </ol>
+        </div>
+
+        <div class="bg-green-500/5 border border-green-500/20 rounded-xl p-5">
+          <h3 class="font-semibold text-green-400 mb-2">Phase 4: Recover &amp; Learn (1-7 days)</h3>
+          <ol class="space-y-1 text-slate-300 text-sm list-decimal list-inside">
+            <li>Rebuild the agent from clean configuration and verified skills only</li>
+            <li>Deploy enhanced monitoring based on the attack's IOCs</li>
+            <li>Conduct a post-incident review with all stakeholders</li>
+            <li>Update vetting procedures to catch similar attacks in the future</li>
+            <li>Submit the pattern to TroySkills database to help the community</li>
+            <li>Test the rebuilt agent in a sandbox before returning to production</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="bg-gradient-to-r from-slate-900 to-slate-900 border border-slate-800 rounded-2xl p-8 text-center relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-r from-red-500/5 to-orange-500/5"></div>
+      <div class="relative">
+        <h2 class="text-2xl font-bold mb-3">Know the Threats</h2>
+        <p class="text-slate-400 mb-6">Browse all documented attack patterns to understand what you're defending against.</p>
+        <a href="/database" class="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold rounded-lg transition-all shadow-lg shadow-red-500/20">
+          Browse Database →
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
