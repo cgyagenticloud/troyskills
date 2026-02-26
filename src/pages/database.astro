@@ -4,15 +4,27 @@ import { getCollection } from 'astro:content';
 
 const skills = await getCollection('skills');
 const sorted = skills.sort((a, b) => a.data.id.localeCompare(b.data.id));
+
+const categories = [
+  { id: 'P1', name: 'Prompt Injection', icon: '💉' },
+  { id: 'P2', name: 'Data Exfiltration', icon: '📤' },
+  { id: 'P3', name: 'Privilege Escalation', icon: '🔓' },
+  { id: 'P4', name: 'Malicious Scripts', icon: '🐍' },
+  { id: 'P5', name: 'Config Tampering', icon: '⚙️' },
+  { id: 'P6', name: 'Social Engineering', icon: '🎭' },
+  { id: 'P7', name: 'Supply Chain', icon: '📦' },
+];
+
+const severities = ['Critical', 'High', 'Medium'];
 ---
 
 <Layout title="Database — TroySkills">
   <section class="max-w-6xl mx-auto px-4 py-12">
     <h1 class="text-3xl font-bold mb-2">Attack Pattern Database</h1>
-    <p class="text-slate-400 mb-8">All documented malicious AI agent skill patterns.</p>
+    <p class="text-slate-400 mb-8">All {sorted.length} documented malicious AI agent skill patterns.</p>
 
     <!-- Search -->
-    <div class="mb-8">
+    <div class="mb-6">
       <input
         type="text"
         id="search"
@@ -21,11 +33,40 @@ const sorted = skills.sort((a, b) => a.data.id.localeCompare(b.data.id));
       />
     </div>
 
+    <!-- Category Filters -->
+    <div class="mb-4">
+      <div class="text-xs text-slate-500 uppercase tracking-wider mb-2">Category</div>
+      <div class="flex flex-wrap gap-2">
+        <button class="filter-cat active text-xs px-3 py-1.5 rounded-full border border-slate-700 bg-slate-800 text-slate-300 hover:border-red-500/50 transition-colors" data-cat="all">All</button>
+        {categories.map(cat => (
+          <button class="filter-cat text-xs px-3 py-1.5 rounded-full border border-slate-700 bg-slate-900 text-slate-400 hover:border-red-500/50 transition-colors" data-cat={cat.id}>
+            {cat.icon} {cat.id}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Severity Filters -->
+    <div class="mb-8">
+      <div class="text-xs text-slate-500 uppercase tracking-wider mb-2">Severity</div>
+      <div class="flex flex-wrap gap-2">
+        <button class="filter-sev active text-xs px-3 py-1.5 rounded-full border border-slate-700 bg-slate-800 text-slate-300 hover:border-red-500/50 transition-colors" data-sev="all">All</button>
+        <button class="filter-sev text-xs px-3 py-1.5 rounded-full border border-slate-700 bg-slate-900 text-red-400 hover:border-red-500/50 transition-colors" data-sev="Critical">🔴 Critical</button>
+        <button class="filter-sev text-xs px-3 py-1.5 rounded-full border border-slate-700 bg-slate-900 text-orange-400 hover:border-red-500/50 transition-colors" data-sev="High">🟠 High</button>
+        <button class="filter-sev text-xs px-3 py-1.5 rounded-full border border-slate-700 bg-slate-900 text-yellow-400 hover:border-red-500/50 transition-colors" data-sev="Medium">🟡 Medium</button>
+      </div>
+    </div>
+
+    <!-- Results count -->
+    <div class="text-sm text-slate-500 mb-4" id="results-count">Showing {sorted.length} patterns</div>
+
     <!-- Table -->
     <div class="space-y-3" id="skill-list">
       {sorted.map(skill => (
         <a href={`/skill/${skill.data.id}`} class="skill-item block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors"
-           data-search={`${skill.data.id} ${skill.data.title} ${skill.data.category} ${skill.data.description} ${(skill.data.tags || []).join(' ')}`.toLowerCase()}>
+           data-search={`${skill.data.id} ${skill.data.title} ${skill.data.category} ${skill.data.description} ${(skill.data.tags || []).join(' ')}`.toLowerCase()}
+           data-cat={skill.data.category}
+           data-sev={skill.data.severity}>
           <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
               <span class="text-xs font-mono text-red-400 mr-3">{skill.data.id}</span>
@@ -50,12 +91,53 @@ const sorted = skills.sort((a, b) => a.data.id.localeCompare(b.data.id));
   <script>
     const search = document.getElementById('search') as HTMLInputElement;
     const items = document.querySelectorAll('.skill-item');
-    search?.addEventListener('input', () => {
-      const q = search.value.toLowerCase().trim();
+    const catBtns = document.querySelectorAll('.filter-cat');
+    const sevBtns = document.querySelectorAll('.filter-sev');
+    const countEl = document.getElementById('results-count');
+
+    let activeCat = 'all';
+    let activeSev = 'all';
+
+    function applyFilters() {
+      const q = search?.value.toLowerCase().trim() || '';
+      let visible = 0;
       items.forEach(item => {
-        const data = (item as HTMLElement).dataset.search || '';
-        (item as HTMLElement).style.display = !q || data.includes(q) ? '' : 'none';
+        const el = item as HTMLElement;
+        const matchSearch = !q || (el.dataset.search || '').includes(q);
+        const matchCat = activeCat === 'all' || el.dataset.cat === activeCat;
+        const matchSev = activeSev === 'all' || el.dataset.sev === activeSev;
+        const show = matchSearch && matchCat && matchSev;
+        el.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      if (countEl) countEl.textContent = `Showing ${visible} pattern${visible !== 1 ? 's' : ''}`;
+    }
+
+    function setActive(btns: NodeListOf<Element>, activeBtn: Element) {
+      btns.forEach(b => {
+        b.classList.remove('active', 'bg-slate-800', 'text-slate-300');
+        b.classList.add('bg-slate-900');
+      });
+      activeBtn.classList.add('active', 'bg-slate-800', 'text-slate-300');
+      activeBtn.classList.remove('bg-slate-900');
+    }
+
+    catBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeCat = (btn as HTMLElement).dataset.cat || 'all';
+        setActive(catBtns, btn);
+        applyFilters();
       });
     });
+
+    sevBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeSev = (btn as HTMLElement).dataset.sev || 'all';
+        setActive(sevBtns, btn);
+        applyFilters();
+      });
+    });
+
+    search?.addEventListener('input', applyFilters);
   </script>
 </Layout>

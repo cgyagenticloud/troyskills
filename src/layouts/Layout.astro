@@ -4,9 +4,11 @@ import '../styles/global.css'
 interface Props {
   title: string;
   description?: string;
+  ogImage?: string;
 }
 
-const { title, description = 'TroySkills — AI Agent Malicious Skills Database. Like CVE/NVD, but for AI agent skills.' } = Astro.props;
+const { title, description = 'TroySkills — AI Agent Malicious Skills Database. Like CVE/NVD, but for AI agent skills.', ogImage = '/og-image.png' } = Astro.props;
+const canonicalUrl = new URL(Astro.url.pathname, 'https://troyskills.ai');
 ---
 
 <!doctype html>
@@ -16,6 +18,19 @@ const { title, description = 'TroySkills — AI Agent Malicious Skills Database.
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalUrl.href} />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl.href} />
+    <meta property="og:image" content={`https://troyskills.ai${ogImage}`} />
+    <meta property="og:site_name" content="TroySkills" />
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`https://troyskills.ai${ogImage}`} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -24,9 +39,9 @@ const { title, description = 'TroySkills — AI Agent Malicious Skills Database.
   <body class="bg-slate-950 text-slate-100 min-h-screen">
     <nav class="border-b border-slate-800 bg-slate-950/80 backdrop-blur-sm sticky top-0 z-50">
       <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-        <a href="/" class="flex items-center gap-2 text-xl font-bold">
-          <span class="text-red-500">⚠</span>
-          <span>Troy<span class="text-red-500">Skills</span></span>
+        <a href="/" class="flex items-center gap-2 text-xl font-bold group">
+          <span class="text-2xl">🛡️</span>
+          <span class="tracking-tight">Troy<span class="text-red-500">Skills</span><span class="text-xs text-slate-500 ml-1">.ai</span></span>
         </a>
         <div class="flex items-center gap-6 text-sm">
           <a href="/database" class="hover:text-red-400 transition-colors">Database</a>

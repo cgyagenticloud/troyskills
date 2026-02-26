@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://troyskills.ai/sitemap-index.xml
