@@ -5,13 +5,62 @@ import { getCollection } from 'astro:content';
 
 const skills = await getCollection('skills');
 const categories = [
-  { id: 'P1', name: 'Prompt Injection', icon: '💉', desc: 'Skills that inject malicious instructions into agent prompts, overriding system behavior.' },
-  { id: 'P2', name: 'Data Exfiltration', icon: '📤', desc: 'Skills that steal data — credentials, conversations, files — and send them to attackers.' },
-  { id: 'P3', name: 'Privilege Escalation', icon: '🔓', desc: 'Skills that trick agents into running commands with elevated system privileges.' },
-  { id: 'P4', name: 'Malicious Scripts', icon: '🐍', desc: 'Skills containing malware — reverse shells, backdoors, keyloggers, cryptominers.' },
-  { id: 'P5', name: 'Config Tampering', icon: '⚙️', desc: 'Skills that modify agent configuration for persistent compromise.' },
-  { id: 'P6', name: 'Social Engineering', icon: '🎭', desc: 'Skills that abuse agent messaging to phish, scam, or impersonate users.' },
-  { id: 'P7', name: 'Supply Chain', icon: '📦', desc: 'Skills that exploit the distribution and dependency chain of the skill ecosystem.' },
+  {
+    id: 'P1', name: 'Prompt Injection', icon: '💉',
+    desc: 'Skills that inject malicious instructions into agent prompts, overriding system behavior.',
+    longDesc: 'Prompt injection is the most fundamental attack vector against AI agents. Attackers embed hidden instructions in skill files, tool outputs, or user inputs that override the agent\'s system prompt and hijack its behavior. These attacks exploit the inability of current LLMs to reliably distinguish between trusted instructions and injected content.',
+    notable: 'TS-2026-0001',
+    riskLevel: 'Critical — can achieve full agent hijack with a single injected instruction.',
+    defense: 'Use input sanitization, instruction hierarchy enforcement, and prompt firewalls. Isolate skill instructions from system prompts with clear delimiters and validation layers.',
+  },
+  {
+    id: 'P2', name: 'Data Exfiltration', icon: '📤',
+    desc: 'Skills that steal data — credentials, conversations, files — and send them to attackers.',
+    longDesc: 'Data exfiltration skills silently extract sensitive information from the agent\'s environment — including API keys, conversation history, file contents, and user credentials — and transmit them to attacker-controlled endpoints. These attacks are particularly dangerous because they can operate stealthily alongside legitimate skill functionality.',
+    notable: 'TS-2026-0017',
+    riskLevel: 'Critical to High — data loss is often irreversible and can enable cascading attacks.',
+    defense: 'Implement network egress controls, monitor outbound requests, and apply data loss prevention (DLP) rules. Sandbox skills with minimal data access permissions.',
+  },
+  {
+    id: 'P3', name: 'Privilege Escalation', icon: '🔓',
+    desc: 'Skills that trick agents into running commands with elevated system privileges.',
+    longDesc: 'Privilege escalation patterns exploit the trust boundary between AI agents and operating systems. Malicious skills manipulate agents into executing commands with sudo, modifying system files, or accessing resources beyond their intended scope. The agent\'s natural tendency to be helpful makes it particularly susceptible to "just run this as root" social engineering.',
+    notable: 'TS-2026-0033',
+    riskLevel: 'Critical — system-level compromise can result in full host takeover.',
+    defense: 'Run agents in sandboxed environments with least-privilege principles. Never grant agents sudo access, and use capability-based security models with explicit permission boundaries.',
+  },
+  {
+    id: 'P4', name: 'Malicious Scripts', icon: '🐍',
+    desc: 'Skills containing malware — reverse shells, backdoors, keyloggers, cryptominers.',
+    longDesc: 'Malicious script patterns embed traditional malware payloads within AI agent skills. These range from reverse shells and backdoors that provide persistent remote access, to keyloggers and cryptominers that exploit host resources. The code is often obfuscated within seemingly legitimate automation scripts, making detection challenging without deep code analysis.',
+    notable: 'TS-2026-0049',
+    riskLevel: 'Critical to High — direct malware execution with potential for persistence and lateral movement.',
+    defense: 'Enforce code signing and static analysis on all skill scripts before execution. Use containerized execution environments and monitor for anomalous process creation, network connections, and resource usage.',
+  },
+  {
+    id: 'P5', name: 'Config Tampering', icon: '⚙️',
+    desc: 'Skills that modify agent configuration for persistent compromise.',
+    longDesc: 'Configuration tampering skills modify agent settings, environment variables, and configuration files to establish persistent footholds. By altering trust settings, disabling security features, or redirecting API endpoints, these skills can maintain long-term compromise that survives agent restarts and updates.',
+    notable: 'TS-2026-0065',
+    riskLevel: 'High — persistence mechanisms make remediation difficult and enable long-term espionage.',
+    defense: 'Use immutable configuration with integrity verification. Monitor config files for unauthorized changes and implement configuration-as-code with version control and drift detection.',
+  },
+  {
+    id: 'P6', name: 'Social Engineering', icon: '🎭',
+    desc: 'Skills that abuse agent messaging to phish, scam, or impersonate users.',
+    longDesc: 'Social engineering patterns weaponize the AI agent\'s communication abilities to deceive humans. Malicious skills can instruct agents to send phishing messages, impersonate trusted contacts, fabricate urgent scenarios, or manipulate users into revealing credentials. The agent\'s authoritative tone and trusted position make these attacks highly effective.',
+    notable: 'TS-2026-0081',
+    riskLevel: 'High — exploits human trust in AI agents, which is increasing as adoption grows.',
+    defense: 'Implement outbound message review and rate limiting. Add clear "AI-generated" labeling to agent communications and require explicit user approval for sensitive actions like sending messages to contacts.',
+  },
+  {
+    id: 'P7', name: 'Supply Chain', icon: '📦',
+    desc: 'Skills that exploit the distribution and dependency chain of the skill ecosystem.',
+    longDesc: 'Supply chain attacks target the skill distribution infrastructure itself — compromising skill registries, injecting malicious updates into popular skills, or exploiting dependency confusion to substitute legitimate packages with malicious ones. These attacks have outsized impact because a single compromised skill can affect thousands of agents simultaneously.',
+    notable: 'TS-2026-0097',
+    riskLevel: 'Critical — blast radius is massive; a single compromised package can affect the entire ecosystem.',
+    defense: 'Verify skill provenance with cryptographic signatures and reproducible builds. Use dependency pinning, conduct regular supply chain audits, and implement a trusted skill registry with review processes.',
+  },
 ];
 ---
 
@@ -19,35 +68,72 @@ const categories = [
   <section class="max-w-6xl mx-auto px-4 py-12">
     <Breadcrumb items={[{ label: "Categories" }]} />
     <h1 class="text-3xl font-bold mb-2">Attack Categories</h1>
-    <p class="text-slate-400 mb-10">Seven categories of malicious AI agent skill patterns.</p>
+    <p class="text-slate-400 mb-10">Seven categories of malicious AI agent skill patterns, with risk assessments and defense guidance.</p>
 
-    <div class="space-y-8">
+    <div class="space-y-12">
       {categories.map(cat => {
         const catSkills = skills.filter(s => s.data.category === cat.id);
+        const notableSkill = catSkills.find(s => s.data.id === cat.notable);
+        const critCount = catSkills.filter(s => s.data.severity === 'Critical').length;
+        const highCount = catSkills.filter(s => s.data.severity === 'High').length;
+        const medCount = catSkills.filter(s => s.data.severity === 'Medium').length;
+        const lowCount = catSkills.filter(s => s.data.severity === 'Low').length;
         return (
-          <div id={cat.id} class="scroll-mt-24">
-            <div class="flex items-center gap-3 mb-4">
-              <span class="text-3xl">{cat.icon}</span>
-              <div>
-                <h2 class="text-xl font-bold">{cat.id}: {cat.name}</h2>
-                <p class="text-slate-400 text-sm">{cat.desc}</p>
+          <div id={cat.id} class="scroll-mt-24 bg-slate-900/50 border border-slate-800 rounded-xl p-6 hover:border-slate-700 transition-colors">
+            <div class="flex items-start gap-4 mb-4">
+              <span class="text-4xl mt-1">{cat.icon}</span>
+              <div class="flex-1">
+                <h2 class="text-2xl font-bold mb-1">{cat.id}: {cat.name}</h2>
+                <p class="text-slate-400 text-sm mb-3">{cat.longDesc}</p>
+
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                  <div class="bg-slate-950/50 rounded-lg p-4 border border-slate-800">
+                    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">⚠️ Risk Level</h3>
+                    <p class="text-sm text-slate-300">{cat.riskLevel}</p>
+                  </div>
+                  <div class="bg-slate-950/50 rounded-lg p-4 border border-slate-800">
+                    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">🛡️ Defense Summary</h3>
+                    <p class="text-sm text-slate-300">{cat.defense}</p>
+                  </div>
+                </div>
+
+                {notableSkill && (
+                  <div class="bg-red-500/5 border border-red-500/20 rounded-lg p-4 mb-4">
+                    <h3 class="text-xs font-semibold text-red-400 uppercase tracking-wider mb-1">⭐ Most Notable Pattern</h3>
+                    <a href={`/skill/${notableSkill.data.id}`} class="text-sm font-medium text-slate-200 hover:text-red-400 transition-colors">
+                      <span class="font-mono text-red-400">{notableSkill.data.id}</span> — {notableSkill.data.title}
+                    </a>
+                    <p class="text-xs text-slate-500 mt-1">{notableSkill.data.description}</p>
+                  </div>
+                )}
+
+                <div class="flex items-center gap-3 text-xs mb-4">
+                  <span class="text-slate-500">{catSkills.length} patterns:</span>
+                  {critCount > 0 && <span class="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400">{critCount} Critical</span>}
+                  {highCount > 0 && <span class="px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400">{highCount} High</span>}
+                  {medCount > 0 && <span class="px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400">{medCount} Medium</span>}
+                  {lowCount > 0 && <span class="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">{lowCount} Low</span>}
+                </div>
               </div>
             </div>
+
             {catSkills.length > 0 ? (
-              <div class="space-y-2 ml-12">
+              <div class="space-y-2 ml-14">
                 {catSkills.map(skill => (
-                  <a href={`/skill/${skill.data.id}`} class="block bg-slate-900 border border-slate-800 rounded-lg p-4 hover:border-red-500/50 transition-colors">
+                  <a href={`/skill/${skill.data.id}`} class="block bg-slate-950/50 border border-slate-800 rounded-lg p-3 hover:border-red-500/50 transition-colors">
                     <span class="text-xs font-mono text-red-400 mr-2">{skill.data.id}</span>
-                    <span class="font-medium">{skill.data.title}</span>
+                    <span class="font-medium text-sm">{skill.data.title}</span>
                     <span class={`ml-3 text-xs px-2 py-0.5 rounded-full ${
                       skill.data.severity === 'Critical' ? 'bg-red-500/20 text-red-400' :
-                      'bg-orange-500/20 text-orange-400'
+                      skill.data.severity === 'High' ? 'bg-orange-500/20 text-orange-400' :
+                      skill.data.severity === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                      'bg-blue-500/20 text-blue-400'
                     }`}>{skill.data.severity}</span>
                   </a>
                 ))}
               </div>
             ) : (
-              <p class="ml-12 text-slate-600 text-sm italic">No patterns documented yet.</p>
+              <p class="ml-14 text-slate-600 text-sm italic">No patterns documented yet.</p>
             )}
           </div>
         );
