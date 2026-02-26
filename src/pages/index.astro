@@ -12,16 +12,21 @@ const categories = [
   { id: 'P6', name: 'Social Engineering', icon: '🎭', count: skills.filter(s => s.data.category === 'P6').length },
   { id: 'P7', name: 'Supply Chain', icon: '📦', count: skills.filter(s => s.data.category === 'P7').length },
 ];
+const maxCatCount = Math.max(...categories.map(c => c.count));
 const recentSkills = skills.sort((a, b) => b.data.date.localeCompare(a.data.date)).slice(0, 5);
 const criticalCount = skills.filter(s => s.data.severity === 'Critical').length;
 const highCount = skills.filter(s => s.data.severity === 'High').length;
 const mediumCount = skills.filter(s => s.data.severity === 'Medium').length;
+const lowCount = skills.filter(s => s.data.severity === 'Low').length;
+const criticalPatterns = skills
+  .filter(s => s.data.severity === 'Critical')
+  .sort((a, b) => a.data.id.localeCompare(b.data.id))
+  .slice(0, 5);
 ---
 
 <Layout title="TroySkills — AI Agent Malicious Skills Database">
   <!-- Hero -->
   <section class="relative max-w-6xl mx-auto px-4 py-24 text-center overflow-hidden">
-    <!-- Background glow effect -->
     <div class="absolute inset-0 -z-10">
       <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-500/5 rounded-full blur-3xl"></div>
       <div class="absolute top-1/3 left-1/3 w-[300px] h-[300px] bg-red-600/3 rounded-full blur-2xl"></div>
@@ -38,9 +43,12 @@ const mediumCount = skills.filter(s => s.data.severity === 'Medium').length;
       TroySkills is a public database of malicious AI agent skill patterns — 
       like CVE/NVD, but built specifically for the AI agent ecosystem.
     </p>
-    <div class="flex justify-center gap-4">
+    <div class="flex justify-center gap-4 flex-wrap">
       <a href="/database" class="px-8 py-3.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold rounded-lg transition-all shadow-lg shadow-red-500/20">
         Browse Database →
+      </a>
+      <a href="/api" class="px-8 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-lg transition-colors border border-slate-700">
+        API Access
       </a>
       <a href="/about" class="px-8 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-lg transition-colors border border-slate-700">
         Learn More
@@ -48,32 +56,39 @@ const mediumCount = skills.filter(s => s.data.severity === 'Medium').length;
     </div>
   </section>
 
-  <!-- Stats -->
+  <!-- Animated Stats Counter -->
   <section class="max-w-6xl mx-auto px-4 py-10">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-        <div class="text-3xl font-bold text-red-500">{skills.length}</div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 group hover:border-red-500/50 transition-all">
+        <div class="text-4xl font-bold text-red-500 counter" data-target={skills.length}>0</div>
         <div class="text-slate-400 text-sm mt-1">Attack Patterns</div>
       </div>
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-        <div class="text-3xl font-bold text-red-500">7</div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 group hover:border-red-500/50 transition-all">
+        <div class="text-4xl font-bold text-red-500 counter" data-target="7">0</div>
         <div class="text-slate-400 text-sm mt-1">Categories</div>
       </div>
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-        <div class="text-3xl font-bold text-red-500">{criticalCount}</div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 group hover:border-red-500/50 transition-all">
+        <div class="text-4xl font-bold text-red-500 counter" data-target={criticalCount}>0</div>
         <div class="text-slate-400 text-sm mt-1">Critical Severity</div>
       </div>
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-        <div class="text-3xl font-bold text-orange-500">{highCount}</div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 group hover:border-orange-500/50 transition-all">
+        <div class="text-4xl font-bold text-orange-500 counter" data-target={highCount}>0</div>
         <div class="text-slate-400 text-sm mt-1">High Severity</div>
       </div>
     </div>
   </section>
 
-  <!-- Severity Distribution -->
+  <!-- Severity Breakdown -->
   <section class="max-w-6xl mx-auto px-4 py-10">
     <h2 class="text-2xl font-bold mb-6">Severity Distribution</h2>
     <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <!-- Stacked bar overview -->
+      <div class="h-6 rounded-full overflow-hidden flex mb-6">
+        <div class="bg-gradient-to-r from-red-700 to-red-500 severity-bar" style={`width: ${criticalCount / skills.length * 100}%`} title={`Critical: ${criticalCount}`}></div>
+        <div class="bg-gradient-to-r from-orange-600 to-orange-400 severity-bar" style={`width: ${highCount / skills.length * 100}%`} title={`High: ${highCount}`}></div>
+        <div class="bg-gradient-to-r from-yellow-600 to-yellow-400 severity-bar" style={`width: ${mediumCount / skills.length * 100}%`} title={`Medium: ${mediumCount}`}></div>
+        {lowCount > 0 && <div class="bg-gradient-to-r from-green-600 to-green-400 severity-bar" style={`width: ${lowCount / skills.length * 100}%`} title={`Low: ${lowCount}`}></div>}
+      </div>
       <div class="space-y-4">
         <div>
           <div class="flex justify-between text-sm mb-1">
@@ -81,7 +96,7 @@ const mediumCount = skills.filter(s => s.data.severity === 'Medium').length;
             <span class="text-slate-400">{criticalCount} ({Math.round(criticalCount / skills.length * 100)}%)</span>
           </div>
           <div class="h-3 bg-slate-800 rounded-full overflow-hidden">
-            <div class="h-full bg-gradient-to-r from-red-600 to-red-500 rounded-full" style={`width: ${criticalCount / skills.length * 100}%`}></div>
+            <div class="h-full bg-gradient-to-r from-red-600 to-red-500 rounded-full bar-animate" style={`--bar-width: ${criticalCount / skills.length * 100}%`}></div>
           </div>
         </div>
         <div>
@@ -90,7 +105,7 @@ const mediumCount = skills.filter(s => s.data.severity === 'Medium').length;
             <span class="text-slate-400">{highCount} ({Math.round(highCount / skills.length * 100)}%)</span>
           </div>
           <div class="h-3 bg-slate-800 rounded-full overflow-hidden">
-            <div class="h-full bg-gradient-to-r from-orange-600 to-orange-500 rounded-full" style={`width: ${highCount / skills.length * 100}%`}></div>
+            <div class="h-full bg-gradient-to-r from-orange-600 to-orange-500 rounded-full bar-animate" style={`--bar-width: ${highCount / skills.length * 100}%`}></div>
           </div>
         </div>
         <div>
@@ -99,22 +114,65 @@ const mediumCount = skills.filter(s => s.data.severity === 'Medium').length;
             <span class="text-slate-400">{mediumCount} ({Math.round(mediumCount / skills.length * 100)}%)</span>
           </div>
           <div class="h-3 bg-slate-800 rounded-full overflow-hidden">
-            <div class="h-full bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-full" style={`width: ${mediumCount / skills.length * 100}%`}></div>
+            <div class="h-full bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-full bar-animate" style={`--bar-width: ${mediumCount / skills.length * 100}%`}></div>
           </div>
         </div>
+        {lowCount > 0 && (
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="text-green-400 font-medium">🟢 Low</span>
+              <span class="text-slate-400">{lowCount} ({Math.round(lowCount / skills.length * 100)}%)</span>
+            </div>
+            <div class="h-3 bg-slate-800 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-green-600 to-green-500 rounded-full bar-animate" style={`--bar-width: ${lowCount / skills.length * 100}%`}></div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   </section>
 
-  <!-- Categories -->
+  <!-- Category Distribution Bar Chart -->
   <section class="max-w-6xl mx-auto px-4 py-10">
-    <h2 class="text-2xl font-bold mb-6">Attack Categories</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      {categories.map(cat => (
-        <a href={`/categories#${cat.id}`} class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
-          <div class="text-2xl mb-2">{cat.icon}</div>
-          <div class="font-semibold group-hover:text-red-400 transition-colors">{cat.id}: {cat.name}</div>
-          <div class="text-slate-500 text-sm">{cat.count} pattern{cat.count !== 1 ? 's' : ''}</div>
+    <h2 class="text-2xl font-bold mb-6">Category Distribution</h2>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+      <div class="space-y-4">
+        {categories.map(cat => (
+          <a href={`/categories#${cat.id}`} class="block group">
+            <div class="flex items-center gap-3">
+              <span class="text-lg w-8 text-center shrink-0">{cat.icon}</span>
+              <div class="flex-1 min-w-0">
+                <div class="flex justify-between text-sm mb-1">
+                  <span class="font-medium group-hover:text-red-400 transition-colors truncate">{cat.id}: {cat.name}</span>
+                  <span class="text-slate-400 shrink-0 ml-2">{cat.count}</span>
+                </div>
+                <div class="h-4 bg-slate-800 rounded-full overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-red-600/80 to-red-500/60 rounded-full bar-animate group-hover:from-red-500 group-hover:to-orange-500 transition-all" style={`--bar-width: ${cat.count / maxCatCount * 100}%`}></div>
+                </div>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Most Critical Patterns -->
+  <section class="max-w-6xl mx-auto px-4 py-10">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold">🔴 Most Critical Patterns</h2>
+      <a href="/database" class="text-sm text-red-400 hover:text-red-300 transition-colors">View all →</a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {criticalPatterns.map((skill, i) => (
+        <a href={`/skill/${skill.data.id}`} class="bg-slate-900 border border-red-500/20 rounded-xl p-5 hover:border-red-500/50 transition-all hover:shadow-lg hover:shadow-red-500/5 group relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-16 h-16 bg-red-500/5 rounded-bl-full"></div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-mono text-red-400 bg-red-500/10 px-2 py-0.5 rounded">{skill.data.id}</span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-400">Critical</span>
+          </div>
+          <h3 class="font-semibold text-sm group-hover:text-red-400 transition-colors mb-2 leading-snug">{skill.data.title}</h3>
+          <p class="text-xs text-slate-500 line-clamp-2">{skill.data.description}</p>
         </a>
       ))}
     </div>
@@ -138,7 +196,8 @@ const mediumCount = skills.filter(s => s.data.severity === 'Medium').length;
               <span class={`text-xs px-2 py-1 rounded-full ${
                 skill.data.severity === 'Critical' ? 'bg-red-500/20 text-red-400' :
                 skill.data.severity === 'High' ? 'bg-orange-500/20 text-orange-400' :
-                'bg-yellow-500/20 text-yellow-400'
+                skill.data.severity === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                'bg-green-500/20 text-green-400'
               }`}>{skill.data.severity}</span>
               <span class="text-xs text-slate-500">{skill.data.category}</span>
             </div>
@@ -167,4 +226,57 @@ const mediumCount = skills.filter(s => s.data.severity === 'Medium').length;
       </div>
     </div>
   </section>
+
+  <style>
+    /* Animated counter bars */
+    .bar-animate {
+      width: 0;
+      animation: barGrow 1.2s ease-out forwards;
+      animation-delay: 0.3s;
+    }
+    @keyframes barGrow {
+      to { width: var(--bar-width); }
+    }
+    .severity-bar {
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+
+  <script>
+    // Animated counters using IntersectionObserver
+    const counters = document.querySelectorAll('.counter');
+    const animateCounter = (el: Element) => {
+      const target = parseInt((el as HTMLElement).dataset.target || '0');
+      const duration = 1500;
+      const start = performance.now();
+      const step = (now: number) => {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target).toString();
+        if (progress < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    counters.forEach(c => observer.observe(c));
+  </script>
 </Layout>
