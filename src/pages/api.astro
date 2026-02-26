@@ -1,0 +1,126 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="API Documentation — TroySkills">
+  <div class="max-w-4xl mx-auto px-4 py-12">
+    <nav class="text-sm text-slate-500 mb-6">
+      <a href="/" class="hover:text-red-400">Home</a>
+      <span class="mx-2">/</span>
+      <span class="text-slate-300">API</span>
+    </nav>
+
+    <h1 class="text-4xl font-extrabold mb-4">📡 TroySkills API</h1>
+    <p class="text-slate-400 text-lg mb-10">
+      Free, public, read-only JSON API for accessing the TroySkills database programmatically. 
+      No authentication required. All endpoints return static JSON.
+    </p>
+
+    <div class="space-y-10">
+      <!-- Patterns -->
+      <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h2 class="text-xl font-bold mb-2">GET /api/patterns.json</h2>
+        <p class="text-slate-400 text-sm mb-4">Returns all attack patterns with full metadata.</p>
+        <div class="bg-slate-950 rounded-lg p-4 overflow-x-auto">
+          <pre class="text-sm text-slate-300"><code>curl https://troyskills.ai/api/patterns.json</code></pre>
+        </div>
+        <h3 class="text-sm font-semibold text-slate-300 mt-4 mb-2">Response Schema</h3>
+        <div class="bg-slate-950 rounded-lg p-4 overflow-x-auto">
+          <pre class="text-xs text-slate-400"><code>{`[
+  {
+    "id": "TS-2026-0001",
+    "title": "System Prompt Override via Skill Instructions",
+    "category": "P1",
+    "severity": "Critical",
+    "description": "A malicious skill embeds prompt injection...",
+    "date": "2026-02-26",
+    "tags": ["prompt-injection", "system-prompt", "skill.md"]
+  },
+  ...
+]`}</code></pre>
+        </div>
+      </section>
+
+      <!-- Categories -->
+      <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h2 class="text-xl font-bold mb-2">GET /api/categories.json</h2>
+        <p class="text-slate-400 text-sm mb-4">Returns category summaries with counts and severity breakdown.</p>
+        <div class="bg-slate-950 rounded-lg p-4 overflow-x-auto">
+          <pre class="text-sm text-slate-300"><code>curl https://troyskills.ai/api/categories.json</code></pre>
+        </div>
+        <h3 class="text-sm font-semibold text-slate-300 mt-4 mb-2">Response Schema</h3>
+        <div class="bg-slate-950 rounded-lg p-4 overflow-x-auto">
+          <pre class="text-xs text-slate-400"><code>{`[
+  {
+    "id": "P1",
+    "name": "Prompt Injection",
+    "count": 17,
+    "severities": { "Critical": 8, "High": 7, "Medium": 2 }
+  },
+  ...
+]`}</code></pre>
+        </div>
+      </section>
+
+      <!-- Stats -->
+      <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h2 class="text-xl font-bold mb-2">GET /api/stats.json</h2>
+        <p class="text-slate-400 text-sm mb-4">Returns aggregate statistics.</p>
+        <div class="bg-slate-950 rounded-lg p-4 overflow-x-auto">
+          <pre class="text-sm text-slate-300"><code>curl https://troyskills.ai/api/stats.json</code></pre>
+        </div>
+        <h3 class="text-sm font-semibold text-slate-300 mt-4 mb-2">Response Schema</h3>
+        <div class="bg-slate-950 rounded-lg p-4 overflow-x-auto">
+          <pre class="text-xs text-slate-400"><code>{`{
+  "totalPatterns": 100,
+  "totalCategories": 7,
+  "severity": { "Critical": 44, "High": 49, "Medium": 7 },
+  "categories": {
+    "P1": { "name": "Prompt Injection", "count": 17 },
+    ...
+  },
+  "lastUpdated": "2026-02-26"
+}`}</code></pre>
+        </div>
+      </section>
+
+      <!-- Usage Examples -->
+      <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h2 class="text-xl font-bold mb-4">Usage Examples</h2>
+        
+        <h3 class="text-sm font-semibold text-slate-300 mb-2">JavaScript / fetch</h3>
+        <div class="bg-slate-950 rounded-lg p-4 overflow-x-auto mb-4">
+          <pre class="text-xs text-slate-400"><code>{`const res = await fetch('https://troyskills.ai/api/patterns.json');
+const patterns = await res.json();
+const critical = patterns.filter(p => p.severity === 'Critical');
+console.log(\`Found \${critical.length} critical patterns\`);`}</code></pre>
+        </div>
+
+        <h3 class="text-sm font-semibold text-slate-300 mb-2">Python</h3>
+        <div class="bg-slate-950 rounded-lg p-4 overflow-x-auto mb-4">
+          <pre class="text-xs text-slate-400"><code>{`import requests
+patterns = requests.get('https://troyskills.ai/api/patterns.json').json()
+critical = [p for p in patterns if p['severity'] == 'Critical']
+print(f"Found {len(critical)} critical patterns")`}</code></pre>
+        </div>
+
+        <h3 class="text-sm font-semibold text-slate-300 mb-2">jq (command line)</h3>
+        <div class="bg-slate-950 rounded-lg p-4 overflow-x-auto">
+          <pre class="text-xs text-slate-400"><code>{`curl -s https://troyskills.ai/api/patterns.json | jq '.[] | select(.severity=="Critical") | .id'`}</code></pre>
+        </div>
+      </section>
+
+      <!-- Rate Limits -->
+      <section class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <h2 class="text-xl font-bold mb-2">Notes</h2>
+        <ul class="text-slate-400 text-sm space-y-2 list-disc list-inside">
+          <li>All data is static JSON — generated at build time, served via CDN</li>
+          <li>No authentication required</li>
+          <li>No rate limits (it's just static files)</li>
+          <li>Data updates when new patterns are added to the database</li>
+          <li>CORS is enabled — use from any origin</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+</Layout>
