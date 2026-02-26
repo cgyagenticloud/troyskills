@@ -31,6 +31,7 @@ const canonicalUrl = new URL(Astro.url.pathname, 'https://troyskills.ai');
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={`https://troyskills.ai${ogImage}`} />
+    <link rel="alternate" type="application/rss+xml" title="TroySkills RSS Feed" href="/rss.xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -89,6 +90,7 @@ const canonicalUrl = new URL(Astro.url.pathname, 'https://troyskills.ai');
       <div class="max-w-6xl mx-auto px-4 py-8 text-center text-slate-500 text-sm">
         <p>© 2026 TroySkills.ai — AI Agent Malicious Skills Database</p>
         <p class="mt-1">Protecting the AI agent ecosystem, one skill at a time.</p>
+        <p class="mt-2"><a href="/rss.xml" class="text-red-400 hover:text-red-300 transition-colors">📡 RSS Feed</a></p>
       </div>
     </footer>
     <script is:inline>
