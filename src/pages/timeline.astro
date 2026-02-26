@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
 import { getCollection } from 'astro:content';
 
 const skills = await getCollection('skills');
@@ -63,6 +64,7 @@ const growthData = dates.sort().map(d => {
 
 <Layout title="Timeline — TroySkills">
   <section class="max-w-5xl mx-auto px-4 py-12">
+    <Breadcrumb items={[{ label: "Timeline" }]} />
     <h1 class="text-4xl font-bold mb-4">📅 Pattern Timeline</h1>
     <p class="text-slate-400 text-lg mb-8">Visual timeline of when attack patterns were documented, showing the growth of the database over time.</p>
 

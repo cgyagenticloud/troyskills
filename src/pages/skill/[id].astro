@@ -1,16 +1,22 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
   const skills = await getCollection('skills');
-  return skills.map(skill => ({
+  const sorted = skills.sort((a, b) => a.data.id.localeCompare(b.data.id));
+  return sorted.map((skill, i) => ({
     params: { id: skill.data.id },
-    props: { skill },
+    props: {
+      skill,
+      prev: i > 0 ? sorted[i - 1].data : null,
+      next: i < sorted.length - 1 ? sorted[i + 1].data : null,
+    },
   }));
 }
 
-const { skill } = Astro.props;
+const { skill, prev, next } = Astro.props;
 const { Content } = await render(skill);
 
 const categoryNames: Record<string, string> = {
@@ -26,7 +32,10 @@ const categoryNames: Record<string, string> = {
 
 <Layout title={`${skill.data.id}: ${skill.data.title} — TroySkills`}>
   <article class="max-w-4xl mx-auto px-4 py-12">
-    <a href="/database" class="text-sm text-slate-500 hover:text-red-400 transition-colors mb-6 inline-block">← Back to Database</a>
+    <Breadcrumb items={[
+      { label: 'Database', href: '/database' },
+      { label: `${skill.data.id}: ${skill.data.title}` },
+    ]} />
 
     <div class="mb-8">
       <div class="flex items-center gap-3 mb-3 flex-wrap">
@@ -36,18 +45,19 @@ const categoryNames: Record<string, string> = {
         <span class={`text-xs px-2 py-1 rounded-full ${
           skill.data.severity === 'Critical' ? 'bg-red-500/20 text-red-400' :
           skill.data.severity === 'High' ? 'bg-orange-500/20 text-orange-400' :
-          'bg-yellow-500/20 text-yellow-400'
+          skill.data.severity === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+          'bg-green-500/20 text-green-400'
         }`}>{skill.data.severity}</span>
         <span class="text-xs bg-slate-800 px-2 py-1 rounded-full">{skill.data.category}: {categoryNames[skill.data.category]}</span>
       </div>
-      <h1 class="text-3xl font-bold mb-3">{skill.data.title}</h1>
+      <h1 class="text-2xl md:text-3xl font-bold mb-3">{skill.data.title}</h1>
       <p class="text-slate-400">{skill.data.description}</p>
-      <div class="flex gap-2 mt-4">
+      <div class="flex gap-2 mt-4 flex-wrap">
         {skill.data.tags?.map((tag: string) => (
           <span class="text-xs bg-slate-800 text-slate-400 px-2 py-1 rounded">#{tag}</span>
         ))}
       </div>
-      <div class="flex items-center gap-4 mt-4 text-xs text-slate-600">
+      <div class="flex items-center gap-4 mt-4 text-xs text-slate-600 flex-wrap">
         <span>Published: {skill.data.date}</span>
         <button class="share-btn inline-flex items-center gap-1 text-slate-500 hover:text-red-400 transition-colors cursor-pointer" data-title={`${skill.data.id}: ${skill.data.title}`} data-url={`https://troyskills.ai/skill/${skill.data.id}`}>
           🔗 Share
@@ -64,10 +74,27 @@ const categoryNames: Record<string, string> = {
       prose-a:text-red-400 prose-strong:text-slate-200">
       <Content />
     </div>
+
+    <!-- Prev/Next Navigation -->
+    <nav class="mt-12 pt-8 border-t border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {prev ? (
+        <a href={`/skill/${prev.id}`} class="bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-red-500/50 transition-colors group">
+          <div class="text-xs text-slate-500 mb-1">← Previous</div>
+          <div class="text-sm font-mono text-red-400">{prev.id}</div>
+          <div class="text-sm font-medium group-hover:text-red-400 transition-colors truncate">{prev.title}</div>
+        </a>
+      ) : <div />}
+      {next ? (
+        <a href={`/skill/${next.id}`} class="bg-slate-900 border border-slate-800 rounded-xl p-4 hover:border-red-500/50 transition-colors group text-right sm:text-right">
+          <div class="text-xs text-slate-500 mb-1">Next →</div>
+          <div class="text-sm font-mono text-red-400">{next.id}</div>
+          <div class="text-sm font-medium group-hover:text-red-400 transition-colors truncate">{next.title}</div>
+        </a>
+      ) : <div />}
+    </nav>
   </article>
 
   <script>
-    // Copy ID to clipboard
     document.querySelectorAll('.copy-id-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
         const id = (btn as HTMLElement).dataset.id;
@@ -79,8 +106,6 @@ const categoryNames: Record<string, string> = {
         }
       });
     });
-
-    // Share button
     document.querySelectorAll('.share-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
         const el = btn as HTMLElement;

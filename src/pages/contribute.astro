@@ -1,9 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
 ---
 
 <Layout title="Contribute — TroySkills">
   <div class="max-w-4xl mx-auto px-4 py-12">
+    <Breadcrumb items={[{ label: "Contribute" }]} />
     <h1 class="text-4xl font-bold mb-2">Contribute to TroySkills</h1>
     <p class="text-slate-400 mb-10 text-lg">Help us catalog and defend against AI agent skill threats.</p>
 

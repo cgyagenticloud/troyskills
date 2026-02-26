@@ -1,9 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
 ---
 
 <Layout title="Scoring System — TroySkills">
   <div class="max-w-4xl mx-auto px-4 py-12">
+    <Breadcrumb items={[{ label: "Scoring System" }]} />
     <h1 class="text-4xl font-bold mb-2">TroySkills Severity Scoring System</h1>
     <p class="text-slate-400 mb-4 text-lg">TSSS v1.0 — A purpose-built scoring framework for AI agent skill vulnerabilities.</p>
     <p class="text-slate-300 mb-10">Traditional scoring systems like CVSS were designed for software vulnerabilities. TSSS is designed specifically for the unique threat landscape of AI agent skills, where attacks can be semantic, persistent, and cross boundaries that don't exist in traditional software.</p>
