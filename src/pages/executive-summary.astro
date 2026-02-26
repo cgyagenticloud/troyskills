@@ -2,121 +2,148 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Executive Summary — TroySkills" description="One-page executive brief on AI agent security threats. Printable format with key statistics, top threats, and recommended actions.">
-  <section class="max-w-3xl mx-auto px-4 py-12 print:py-4 print:px-2">
+<Layout title="Executive Summary — TroySkills" description="One-page executive brief on AI agent security threats. Printable infographic with key statistics, top threats, and recommended actions.">
+  <section class="max-w-3xl mx-auto px-4 py-12 print:py-2 print:px-2 print:max-w-none">
 
     <div class="print:hidden mb-8 bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 text-sm text-blue-300">
-      🖨️ <strong>Print-ready</strong> — Use Ctrl/Cmd+P to save as PDF. This page is optimized for single-page printing.
+      🖨️ <strong>Print-ready infographic</strong> — Use Ctrl/Cmd+P to save as PDF. Optimized for single-page printing.
     </div>
 
-    <div class="text-center mb-10 print:mb-6">
-      <h1 class="text-3xl font-bold mb-2 print:text-2xl">TroySkills.ai — Executive Brief</h1>
-      <p class="text-slate-400 text-sm">AI Agent Security Threat Intelligence | February 2026</p>
+    <!-- HEADER: Logo + Tagline -->
+    <div class="text-center mb-8 print:mb-4 border-b-2 border-red-500/50 pb-6 print:pb-3">
+      <div class="flex items-center justify-center gap-3 mb-3">
+        <div class="w-14 h-14 print:w-10 print:h-10 bg-gradient-to-br from-red-600 to-red-800 rounded-xl flex items-center justify-center text-2xl print:text-xl shadow-lg shadow-red-900/50">
+          🛡️
+        </div>
+        <div class="text-left">
+          <h1 class="text-4xl print:text-2xl font-black tracking-tight">
+            Troy<span class="text-red-500">Skills</span>.ai
+          </h1>
+          <p class="text-slate-400 text-sm print:text-xs font-medium -mt-1">AI Agent Security Threat Intelligence</p>
+        </div>
+      </div>
+      <p class="text-slate-500 text-xs italic">The first comprehensive database of AI agent attack patterns — February 2026</p>
     </div>
 
-    <!-- Key Statistics -->
-    <div class="mb-8 print:mb-5">
-      <h2 class="text-lg font-bold mb-4 border-b border-slate-700 pb-2 print:text-base">📊 Key Statistics</h2>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
-        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4 print:border-gray-300 print:bg-white">
-          <div class="text-2xl font-bold text-red-400 print:text-red-600">130</div>
-          <div class="text-xs text-slate-400 print:text-gray-600">Documented Attack Patterns</div>
-        </div>
-        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4 print:border-gray-300 print:bg-white">
-          <div class="text-2xl font-bold text-red-400 print:text-red-600">7</div>
-          <div class="text-xs text-slate-400 print:text-gray-600">Attack Categories</div>
-        </div>
-        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4 print:border-gray-300 print:bg-white">
-          <div class="text-2xl font-bold text-red-400 print:text-red-600">38%</div>
-          <div class="text-xs text-slate-400 print:text-gray-600">Rated Critical Severity</div>
-        </div>
-        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4 print:border-gray-300 print:bg-white">
-          <div class="text-2xl font-bold text-red-400 print:text-red-600">6</div>
-          <div class="text-xs text-slate-400 print:text-gray-600">Industry Sectors Impacted</div>
-        </div>
+    <!-- 3 KEY STATS — Large Font Hero Numbers -->
+    <div class="grid grid-cols-3 gap-4 print:gap-2 mb-8 print:mb-4">
+      <div class="bg-gradient-to-b from-red-500/10 to-transparent border border-red-500/30 rounded-2xl p-5 print:p-3 text-center">
+        <div class="text-5xl print:text-3xl font-black text-red-400 print:text-red-600 leading-none">150</div>
+        <div class="text-xs text-slate-400 print:text-gray-600 mt-2 font-semibold uppercase tracking-wider">Attack Patterns</div>
+        <div class="text-[10px] text-slate-500 mt-1">Documented & Classified</div>
+      </div>
+      <div class="bg-gradient-to-b from-orange-500/10 to-transparent border border-orange-500/30 rounded-2xl p-5 print:p-3 text-center">
+        <div class="text-5xl print:text-3xl font-black text-orange-400 print:text-orange-600 leading-none">7</div>
+        <div class="text-xs text-slate-400 print:text-gray-600 mt-2 font-semibold uppercase tracking-wider">Attack Categories</div>
+        <div class="text-[10px] text-slate-500 mt-1">From Prompt Injection to Supply Chain</div>
+      </div>
+      <div class="bg-gradient-to-b from-yellow-500/10 to-transparent border border-yellow-500/30 rounded-2xl p-5 print:p-3 text-center">
+        <div class="text-5xl print:text-3xl font-black text-yellow-400 print:text-yellow-600 leading-none">38%</div>
+        <div class="text-xs text-slate-400 print:text-gray-600 mt-2 font-semibold uppercase tracking-wider">Critical Severity</div>
+        <div class="text-[10px] text-slate-500 mt-1">Immediate Action Required</div>
       </div>
     </div>
 
-    <!-- Top 5 Critical Threats -->
-    <div class="mb-8 print:mb-5">
-      <h2 class="text-lg font-bold mb-4 border-b border-slate-700 pb-2 print:text-base">🔴 Top 5 Most Critical Threats</h2>
-      <div class="space-y-3">
-        <div class="flex gap-3 items-start">
-          <span class="text-red-400 font-bold text-lg shrink-0 w-6">1</span>
-          <div>
-            <h3 class="font-semibold text-sm">Indirect Prompt Injection via Enterprise Documents</h3>
-            <p class="text-xs text-slate-400 print:text-gray-600">Adversarial instructions hidden in SharePoint, email, and shared documents hijack AI agents with full corporate API access. Affects every organization using document-processing agents.</p>
-          </div>
-        </div>
-        <div class="flex gap-3 items-start">
-          <span class="text-red-400 font-bold text-lg shrink-0 w-6">2</span>
-          <div>
-            <h3 class="font-semibold text-sm">AI Coding Agent Supply Chain Compromise</h3>
-            <p class="text-xs text-slate-400 print:text-gray-600">Malicious repository content and rules files (.cursorrules, copilot-instructions.md) cause coding agents to generate vulnerable code across entire development teams. One poisoned file affects thousands of downstream projects.</p>
-          </div>
-        </div>
-        <div class="flex gap-3 items-start">
-          <span class="text-red-400 font-bold text-lg shrink-0 w-6">3</span>
-          <div>
-            <h3 class="font-semibold text-sm">Financial Agent Manipulation (Trading & Payments)</h3>
-            <p class="text-xs text-slate-400 print:text-gray-600">Market data poisoning causes autonomous trading agents to execute losing trades. Invoice injection redirects payments to attacker accounts. Direct, irreversible financial impact.</p>
-          </div>
-        </div>
-        <div class="flex gap-3 items-start">
-          <span class="text-red-400 font-bold text-lg shrink-0 w-6">4</span>
-          <div>
-            <h3 class="font-semibold text-sm">Healthcare AI Record & Prescription Tampering</h3>
-            <p class="text-xs text-slate-400 print:text-gray-600">Injected content in medical records causes clinical AI agents to suppress critical lab findings or dangerous drug interactions. Life-threatening patient safety risk.</p>
-          </div>
-        </div>
-        <div class="flex gap-3 items-start">
-          <span class="text-red-400 font-bold text-lg shrink-0 w-6">5</span>
-          <div>
-            <h3 class="font-semibold text-sm">Multi-Agent Identity Spoofing & Privilege Escalation</h3>
-            <p class="text-xs text-slate-400 print:text-gray-600">Weak authentication between agents in multi-agent architectures allows attackers to impersonate high-privilege agents, gaining control over entire agent networks.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recommended Actions -->
-    <div class="mb-8 print:mb-5">
-      <h2 class="text-lg font-bold mb-4 border-b border-slate-700 pb-2 print:text-base">✅ Recommended Immediate Actions</h2>
-      <div class="space-y-2">
-        <div class="flex gap-2 items-start text-sm">
-          <span class="text-green-400 shrink-0">→</span>
-          <p class="text-slate-300 print:text-gray-800"><strong>Audit agent permissions.</strong> Inventory all AI agents in your organization, their data access, tool capabilities, and communication channels. Apply least-privilege immediately.</p>
-        </div>
-        <div class="flex gap-2 items-start text-sm">
-          <span class="text-green-400 shrink-0">→</span>
-          <p class="text-slate-300 print:text-gray-800"><strong>Sanitize agent inputs.</strong> Strip hidden content (white text, metadata, vanish tags) from all documents before AI processing. Treat all external data as untrusted.</p>
-        </div>
-        <div class="flex gap-2 items-start text-sm">
-          <span class="text-green-400 shrink-0">→</span>
-          <p class="text-slate-300 print:text-gray-800"><strong>Implement human-in-the-loop.</strong> Require human approval for all high-impact agent actions: financial transactions, external communications, code deployments, and clinical decisions.</p>
-        </div>
-        <div class="flex gap-2 items-start text-sm">
-          <span class="text-green-400 shrink-0">→</span>
-          <p class="text-slate-300 print:text-gray-800"><strong>Secure developer AI tools.</strong> Add agent rules files (.cursorrules, etc.) to CODEOWNERS. Scan AI-generated code with the same rigor as external contributions.</p>
-        </div>
-        <div class="flex gap-2 items-start text-sm">
-          <span class="text-green-400 shrink-0">→</span>
-          <p class="text-slate-300 print:text-gray-800"><strong>Red-team your agents.</strong> Use the <a href="/simulator" class="text-red-400 hover:underline print:text-red-600">TroySkills Attack Simulator</a> methodology to test agent resilience against known attack patterns before production deployment.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="border-t border-slate-700 pt-4 text-center text-xs text-slate-500 print:text-gray-500">
-      <p>TroySkills.ai — The first comprehensive database of AI agent attack patterns</p>
-      <p class="mt-1">130 patterns across 7 categories | Open source at github.com/cgyagenticloud/troyskills</p>
-      <p class="mt-1 print:hidden">
-        <a href="/database" class="text-red-400 hover:underline">Browse Database</a> ·
-        <a href="/defense" class="text-red-400 hover:underline">Defense Playbook</a> ·
-        <a href="/checklist" class="text-red-400 hover:underline">Security Checklist</a> ·
-        <a href="/simulator" class="text-red-400 hover:underline">Attack Simulator</a>
+    <!-- THREAT LANDSCAPE OVERVIEW -->
+    <div class="mb-7 print:mb-4 bg-slate-900/50 border border-slate-800 rounded-xl p-5 print:p-3 print:bg-white print:border-gray-300">
+      <h2 class="text-sm font-bold mb-2 text-slate-300 print:text-gray-800 flex items-center gap-2">
+        <span class="text-lg">🌐</span> Threat Landscape
+      </h2>
+      <p class="text-sm print:text-xs text-slate-400 print:text-gray-600 leading-relaxed">
+        AI agents are becoming the primary interface between humans and digital systems — managing code, finances, healthcare, and infrastructure. As adoption accelerates, so does the attack surface. TroySkills has documented <strong class="text-white print:text-black">150 distinct attack patterns</strong> across 7 categories, revealing that AI agent skills represent an entirely new class of software supply chain risk. Unlike traditional malware, these attacks exploit the <em>trust relationship</em> between agents and their tools, turning helpful capabilities into weapons. Every organization deploying AI agents is exposed.
       </p>
+    </div>
+
+    <!-- TOP 3 ATTACK CATEGORIES WITH ICONS -->
+    <div class="mb-7 print:mb-4">
+      <h2 class="text-sm font-bold mb-3 text-slate-300 print:text-gray-800 flex items-center gap-2">
+        <span class="text-lg">🔴</span> Top 3 Attack Categories
+      </h2>
+      <div class="grid grid-cols-3 gap-3 print:gap-2">
+        <div class="border border-red-500/30 rounded-xl p-4 print:p-2 text-center bg-red-500/5 print:bg-white print:border-gray-300">
+          <div class="text-3xl print:text-2xl mb-2">💉</div>
+          <h3 class="font-bold text-sm print:text-xs text-red-400 print:text-red-600">Prompt Injection</h3>
+          <div class="text-2xl print:text-xl font-black text-white print:text-black mt-1">P1</div>
+          <p class="text-[11px] print:text-[9px] text-slate-400 print:text-gray-600 mt-2 leading-tight">Skills that override agent system prompts to hijack behavior, bypass safety filters, and execute unauthorized commands.</p>
+        </div>
+        <div class="border border-orange-500/30 rounded-xl p-4 print:p-2 text-center bg-orange-500/5 print:bg-white print:border-gray-300">
+          <div class="text-3xl print:text-2xl mb-2">📤</div>
+          <h3 class="font-bold text-sm print:text-xs text-orange-400 print:text-orange-600">Data Exfiltration</h3>
+          <div class="text-2xl print:text-xl font-black text-white print:text-black mt-1">P2</div>
+          <p class="text-[11px] print:text-[9px] text-slate-400 print:text-gray-600 mt-2 leading-tight">Skills that steal credentials, API keys, user data, and proprietary information through covert channels and side-band communication.</p>
+        </div>
+        <div class="border border-yellow-500/30 rounded-xl p-4 print:p-2 text-center bg-yellow-500/5 print:bg-white print:border-gray-300">
+          <div class="text-3xl print:text-2xl mb-2">⚙️</div>
+          <h3 class="font-bold text-sm print:text-xs text-yellow-400 print:text-yellow-600">Config Tampering</h3>
+          <div class="text-2xl print:text-xl font-black text-white print:text-black mt-1">P5</div>
+          <p class="text-[11px] print:text-[9px] text-slate-400 print:text-gray-600 mt-2 leading-tight">Skills that poison agent configuration, infrastructure files, and package manager settings for persistent, stealthy compromise.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHAT YOU SHOULD DO NOW -->
+    <div class="mb-7 print:mb-4 bg-gradient-to-r from-green-500/10 to-emerald-500/5 border border-green-500/30 rounded-xl p-5 print:p-3 print:bg-white print:border-gray-300">
+      <h2 class="text-sm font-bold mb-3 text-green-400 print:text-green-700 flex items-center gap-2">
+        <span class="text-lg">✅</span> What You Should Do Now
+      </h2>
+      <div class="space-y-3 print:space-y-2">
+        <div class="flex gap-3 items-start">
+          <div class="w-7 h-7 print:w-5 print:h-5 bg-green-500/20 print:bg-green-100 rounded-full flex items-center justify-center shrink-0 text-green-400 print:text-green-700 font-black text-sm print:text-xs">1</div>
+          <div>
+            <p class="text-sm print:text-xs text-slate-300 print:text-gray-800"><strong>Audit every AI agent's permissions today.</strong> Inventory all tools, file access, network capabilities, and API keys. Apply least-privilege — remove any access not explicitly required.</p>
+          </div>
+        </div>
+        <div class="flex gap-3 items-start">
+          <div class="w-7 h-7 print:w-5 print:h-5 bg-green-500/20 print:bg-green-100 rounded-full flex items-center justify-center shrink-0 text-green-400 print:text-green-700 font-black text-sm print:text-xs">2</div>
+          <div>
+            <p class="text-sm print:text-xs text-slate-300 print:text-gray-800"><strong>Require human approval for high-impact actions.</strong> Financial transactions, code deployments, external communications, and infrastructure changes must have a human in the loop. No exceptions.</p>
+          </div>
+        </div>
+        <div class="flex gap-3 items-start">
+          <div class="w-7 h-7 print:w-5 print:h-5 bg-green-500/20 print:bg-green-100 rounded-full flex items-center justify-center shrink-0 text-green-400 print:text-green-700 font-black text-sm print:text-xs">3</div>
+          <div>
+            <p class="text-sm print:text-xs text-slate-300 print:text-gray-800"><strong>Red-team your agents against TroySkills patterns.</strong> Use our <a href="/database" class="text-green-400 hover:underline print:text-green-700">attack database</a> and <a href="/simulator" class="text-green-400 hover:underline print:text-green-700">simulator</a> to test your agents before attackers do.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER: QR Code + Links -->
+    <div class="flex items-center justify-between border-t-2 border-slate-700 pt-4 print:pt-2 print:border-gray-400">
+      <div class="text-left">
+        <p class="text-xs text-slate-400 print:text-gray-600 font-semibold">Explore the full database:</p>
+        <p class="text-sm font-bold text-red-400 print:text-red-600">troyskills.ai</p>
+        <p class="text-[10px] text-slate-500 mt-1">
+          <a href="/database" class="hover:underline">Database</a> ·
+          <a href="/defense" class="hover:underline">Defense Playbook</a> ·
+          <a href="/checklist" class="hover:underline">Checklist</a> ·
+          <a href="/simulator" class="hover:underline">Simulator</a>
+        </p>
+        <p class="text-[10px] text-slate-600 mt-2">Open source: github.com/cgyagenticloud/troyskills</p>
+      </div>
+      <div class="text-right">
+        <!-- QR Code Placeholder -->
+        <div class="w-20 h-20 print:w-16 print:h-16 border-2 border-dashed border-slate-600 print:border-gray-400 rounded-lg flex items-center justify-center bg-slate-900/50 print:bg-white">
+          <div class="text-center">
+            <div class="text-lg">📱</div>
+            <div class="text-[8px] text-slate-500 print:text-gray-500 leading-tight mt-1">QR Code<br/>troyskills.ai</div>
+          </div>
+        </div>
+      </div>
     </div>
 
   </section>
 </Layout>
+
+<style>
+  @media print {
+    @page {
+      size: letter;
+      margin: 0.4in;
+    }
+    body {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+</style>
