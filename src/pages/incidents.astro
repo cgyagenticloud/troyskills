@@ -1,0 +1,188 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+
+const incidents = [
+  {
+    id: "INC-001",
+    title: "GitHub Copilot RCE via Prompt Injection (CVE-2025-53773)",
+    date: "August 2025",
+    severity: "Critical",
+    category: "Prompt Injection → Code Execution",
+    summary: "A critical vulnerability in GitHub Copilot allowed attackers to achieve remote code execution by embedding malicious instructions in project files (README.md, source code, config files). The attack worked by manipulating Copilot into modifying .vscode/settings.json to enable 'YOLO mode', bypassing user approval for command execution.",
+    impact: "Full system compromise. Attackers could execute arbitrary commands on developer machines without user interaction.",
+    source: "Embrace The Red / GitHub Security Advisory",
+    url: "https://embracethered.com/blog/posts/2025/github-copilot-remote-code-execution-via-prompt-injection/",
+    patterns: ["TS-2026-0001", "TS-2026-0004", "TS-2026-0101"]
+  },
+  {
+    id: "INC-002",
+    title: "EmailGPT Prompt Injection (CVE-2024-5184)",
+    date: "June 2024",
+    severity: "High",
+    category: "Prompt Injection → Data Exfiltration",
+    summary: "The EmailGPT service (API and Chrome extension) contained a prompt injection vulnerability allowing attackers to inject direct prompts that took over the service logic. Attackers could force the AI to leak hard-coded system prompts and exfiltrate sensitive email content.",
+    impact: "Access to sensitive email data, system prompt leakage, service logic manipulation.",
+    source: "Black Duck CyRC Advisory / OWASP",
+    url: "https://www.blackduck.com/blog/cyrc-advisory-prompt-injection-emailgpt.html",
+    patterns: ["TS-2026-0002", "TS-2026-0006", "TS-2026-0102"]
+  },
+  {
+    id: "INC-003",
+    title: "ChatGPT ShadowLeak — Deep Research Prompt Injection",
+    date: "January 2026",
+    severity: "Critical",
+    category: "Indirect Prompt Injection → Data Exfiltration",
+    summary: "A zero-click prompt injection vulnerability in ChatGPT's Deep Research component allowed attackers to exfiltrate data from connected services (Gmail, Outlook, Google Drive, GitHub). Malicious prompts hidden in content processed by Deep Research could trigger data leakage without user interaction.",
+    impact: "Exfiltration of private data from Gmail, Outlook, Google Drive, and GitHub repositories.",
+    source: "The Register / Infosecurity Magazine",
+    url: "https://www.theregister.com/2026/01/08/openai_chatgpt_prompt_injection",
+    patterns: ["TS-2026-0002", "TS-2026-0015", "TS-2026-0103"]
+  },
+  {
+    id: "INC-004",
+    title: "MCP-Remote RCE via Malicious Authorization Endpoint",
+    date: "2025",
+    severity: "Critical",
+    category: "Supply Chain → Remote Code Execution",
+    summary: "The mcp-remote package (437,000+ downloads, used by Cloudflare, Hugging Face, Auth0) contained a vulnerability where malicious MCP servers could send a crafted authorization_endpoint that was passed directly into the system shell, achieving remote code execution on the client machine.",
+    impact: "Arbitrary command execution, theft of API keys, cloud credentials, SSH keys, Git repo contents. Effectively a supply-chain backdoor affecting all unpatched installations.",
+    source: "AuthZed Security Blog",
+    url: "https://authzed.com/blog/timeline-mcp-breaches",
+    patterns: ["TS-2026-0007", "TS-2026-0063", "TS-2026-0104"]
+  },
+  {
+    id: "INC-005",
+    title: "MCP Inspector CSRF → RCE (CVE-2025-49596)",
+    date: "2025",
+    severity: "High",
+    category: "Tool Vulnerability → Remote Code Execution",
+    summary: "A CSRF vulnerability in MCP Inspector, a popular developer debugging utility for MCP servers, enabled remote code execution simply by visiting a crafted webpage. This demonstrated how MCP developer tooling itself can become an attack vector.",
+    impact: "Remote code execution on developer machines via crafted web pages.",
+    source: "Elastic Security Labs",
+    url: "https://www.elastic.co/security-labs/mcp-tools-attack-defense-recommendations",
+    patterns: ["TS-2026-0063", "TS-2026-0105"]
+  },
+  {
+    id: "INC-006",
+    title: "Chevrolet Dealership Chatbot Prompt Injection",
+    date: "December 2023",
+    severity: "Medium",
+    category: "Social Engineering → Prompt Injection",
+    summary: "A Chevrolet dealership's AI chatbot was manipulated via prompt injection to agree to sell a 2024 Chevy Tahoe for $1.00 USD, stating it was 'a legally binding offer — no takesies backsies.' The incident went viral and highlighted risks of deploying LLMs in customer-facing transactional contexts.",
+    impact: "Reputational damage, potential legal implications, demonstrated ease of manipulating commercial AI chatbots.",
+    source: "Netwrix / widespread media coverage",
+    url: "https://netwrix.com/en/cybersecurity-glossary/cyber-security-attacks/chatgpt-prompt-injection/",
+    patterns: ["TS-2026-0001", "TS-2026-0052"]
+  },
+  {
+    id: "INC-007",
+    title: "ChatGPT Cross-Plugin Request Forgery (XPRF)",
+    date: "2023",
+    severity: "High",
+    category: "Plugin Exploitation → Data Exfiltration",
+    summary: "Researchers demonstrated that ChatGPT plugins could be chained together via indirect prompt injection to perform cross-plugin request forgery. A malicious document could instruct ChatGPT to invoke the Zapier plugin and exfiltrate data to attacker-controlled endpoints. Zapier mitigated by adding authenticated confirmation requirements.",
+    impact: "Cross-plugin data exfiltration, unauthorized actions via plugin chaining.",
+    source: "Embrace The Red",
+    url: "https://embracethered.com/blog/posts/2023/chatgpt-cross-plugin-request-forgery-and-prompt-injection./",
+    patterns: ["TS-2026-0007", "TS-2026-0015", "TS-2026-0106"]
+  },
+  {
+    id: "INC-008",
+    title: "Supabase Cursor Agent Privilege Escalation",
+    date: "Mid-2025",
+    severity: "Critical",
+    category: "Agent Privilege Abuse → Command Injection",
+    summary: "Supabase's Cursor agent, running with privileged service-role access, processed support tickets containing user-supplied input as commands. This allowed attackers to inject instructions via support tickets that the agent would execute with elevated database privileges.",
+    impact: "Unauthorized database access, potential data destruction or exfiltration via privileged agent.",
+    source: "Practical DevSecOps",
+    url: "https://www.practical-devsecops.com/mcp-security-vulnerabilities/",
+    patterns: ["TS-2026-0003", "TS-2026-0030", "TS-2026-0107"]
+  },
+  {
+    id: "INC-009",
+    title: "PoisonedRAG — RAG Corpus Poisoning Attack",
+    date: "2024",
+    severity: "High",
+    category: "Data Poisoning → Misinformation",
+    summary: "Academic research demonstrated that injecting just 5 malicious documents into a RAG corpus of millions caused the targeted AI to return attacker-desired false answers 90% of the time for specific trigger questions. This attack is extremely efficient — minimal poison, maximum impact.",
+    impact: "AI knowledge corruption, targeted misinformation, difficult to detect.",
+    source: "Academic Research (2024) / Sombra Inc analysis",
+    url: "https://sombrainc.com/blog/llm-security-risks-2026",
+    patterns: ["TS-2026-0005", "TS-2026-0108"]
+  },
+  {
+    id: "INC-010",
+    title: "Log-To-Leak: MCP Tool-Based Privacy Exfiltration",
+    date: "October 2025",
+    severity: "High",
+    category: "Tool Poisoning → Data Exfiltration",
+    summary: "Academic research published on OpenReview introduced a new class of prompt-level privacy attacks on MCP-enabled agents. The attack covertly forces an agent to invoke a malicious logging tool to exfiltrate sensitive information including user queries, tool responses, and agent replies.",
+    impact: "Silent exfiltration of all agent conversation data via compromised MCP tools.",
+    source: "OpenReview (Academic Paper)",
+    url: "https://openreview.net/forum?id=UVgbFuXPaO",
+    patterns: ["TS-2026-0002", "TS-2026-0063", "TS-2026-0109"]
+  }
+];
+
+const severityColors: Record<string, string> = {
+  Critical: 'bg-red-500/20 text-red-400 border-red-500/30',
+  High: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+  Medium: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+  Low: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+};
+---
+
+<Layout title="Real-World Incidents — TroySkills" description="Documented real-world AI agent and LLM security incidents with CVEs, sources, and links to related attack patterns.">
+  <section class="max-w-4xl mx-auto px-4 py-12">
+    <Breadcrumb items={[{ label: "Incidents" }]} />
+    <h1 class="text-3xl font-bold mb-3">Real-World AI Security Incidents</h1>
+    <p class="text-slate-400 mb-8 text-lg">Documented incidents involving AI agents, LLMs, MCP tools, and plugin ecosystems. Each incident is linked to relevant TroySkills attack patterns.</p>
+
+    <div class="not-prose bg-slate-900/50 border border-amber-500/20 rounded-xl p-4 mb-8">
+      <p class="text-amber-400 text-sm"><strong>⚠️ Disclaimer:</strong> This page documents publicly reported security incidents for educational and defensive purposes. All information is sourced from public advisories, academic papers, and news reports.</p>
+    </div>
+
+    <div class="grid gap-6">
+      {incidents.map((inc, i) => (
+        <article class="bg-slate-900 border border-slate-700/50 rounded-xl p-6 hover:border-red-500/30 transition-colors">
+          <div class="flex items-start justify-between mb-3 flex-wrap gap-2">
+            <div class="flex items-center gap-3">
+              <span class="text-xs font-mono text-slate-500">{inc.id}</span>
+              <span class={`text-xs px-2 py-0.5 rounded border ${severityColors[inc.severity]}`}>{inc.severity}</span>
+              <span class="text-xs text-slate-500">{inc.date}</span>
+            </div>
+            <span class="text-xs text-slate-500 bg-slate-800 px-2 py-0.5 rounded">{inc.category}</span>
+          </div>
+          <h2 class="text-lg font-bold text-slate-100 mb-2">{inc.title}</h2>
+          <p class="text-slate-400 text-sm mb-3 leading-relaxed">{inc.summary}</p>
+          <div class="bg-slate-800/50 rounded-lg p-3 mb-3">
+            <p class="text-xs text-red-400 font-semibold mb-1">Impact</p>
+            <p class="text-slate-300 text-sm">{inc.impact}</p>
+          </div>
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div class="flex flex-wrap gap-1">
+              {inc.patterns.map(p => (
+                <a href={`/skill/${p}`} class="text-xs font-mono text-red-400 hover:text-red-300 bg-red-500/10 px-2 py-0.5 rounded">{p}</a>
+              ))}
+            </div>
+            <a href={inc.url} target="_blank" rel="noopener noreferrer" class="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+              {inc.source} <span>↗</span>
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class="mt-12 bg-slate-900 border border-slate-700/50 rounded-xl p-6">
+      <h2 class="text-xl font-bold text-slate-100 mb-4">Key Takeaways</h2>
+      <ul class="space-y-2 text-slate-300 text-sm">
+        <li>🔴 <strong>Prompt injection remains the #1 attack vector</strong> — OWASP ranks it as the top AI security risk for 2025.</li>
+        <li>🔴 <strong>MCP creates new supply-chain attack surfaces</strong> — malicious MCP servers can achieve RCE on client machines.</li>
+        <li>🔴 <strong>AI agents with tool access amplify all vulnerabilities</strong> — a prompt injection becomes an RCE when the agent can execute commands.</li>
+        <li>🔴 <strong>Indirect prompt injection enables zero-click attacks</strong> — no user interaction required when agents process external content.</li>
+        <li>🔴 <strong>Developer tools are high-value targets</strong> — compromising Copilot, Cursor, or MCP Inspector gives access to source code and credentials.</li>
+      </ul>
+    </div>
+  </section>
+</Layout>
