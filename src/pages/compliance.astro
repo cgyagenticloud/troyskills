@@ -1,0 +1,453 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const skills = await getCollection('skills');
+const totalPatterns = skills.length;
+
+// Helper to get patterns by category
+const byCategory = (cat: string) => skills.filter(s => s.data.category === cat);
+const byTag = (tag: string) => skills.filter(s => s.data.tags?.includes(tag));
+const bySeverity = (sev: string) => skills.filter(s => s.data.severity === sev);
+
+// NIST AI RMF mapping
+const nistMapping = [
+  {
+    function: 'GOVERN',
+    description: 'Establishing and maintaining AI risk management governance',
+    subcategories: [
+      { id: 'GV-1', name: 'Policies & Procedures', patterns: skills.filter(s => ['P5','P7'].includes(s.data.category)).slice(0, 8), rationale: 'Config tampering and supply chain attacks require governance policies' },
+      { id: 'GV-2', name: 'Roles & Responsibilities', patterns: skills.filter(s => s.data.category === 'P3').slice(0, 6), rationale: 'Privilege escalation patterns define why clear role boundaries matter' },
+      { id: 'GV-3', name: 'Risk Management Strategy', patterns: bySeverity('Critical').slice(0, 8), rationale: 'Critical-severity patterns inform enterprise risk strategy' },
+    ]
+  },
+  {
+    function: 'MAP',
+    description: 'Identifying and documenting AI risks in context',
+    subcategories: [
+      { id: 'MP-2', name: 'Stakeholder Impact', patterns: skills.filter(s => s.data.tags?.some(t => ['enterprise','financial','healthcare','legal'].includes(t))).slice(0, 10), rationale: 'Industry-specific patterns map stakeholder impact zones' },
+      { id: 'MP-3', name: 'Benefits & Costs', patterns: skills.filter(s => s.data.category === 'P2').slice(0, 8), rationale: 'Data exfiltration patterns quantify potential cost of AI deployment' },
+      { id: 'MP-4', name: 'Intended Purpose', patterns: skills.filter(s => s.data.category === 'P1').slice(0, 8), rationale: 'Prompt injection diverts agents from intended purpose' },
+    ]
+  },
+  {
+    function: 'MEASURE',
+    description: 'Analyzing and monitoring AI risks',
+    subcategories: [
+      { id: 'MS-1', name: 'Risk Assessment', patterns: bySeverity('Critical').concat(bySeverity('High')).slice(0, 10), rationale: 'Severity-scored patterns enable quantitative risk assessment' },
+      { id: 'MS-2', name: 'Monitoring & Evaluation', patterns: skills.filter(s => s.data.tags?.some(t => ['monitoring','detection','logging'].includes(t))).slice(0, 8), rationale: 'Patterns with detection guidance inform monitoring requirements' },
+    ]
+  },
+  {
+    function: 'MANAGE',
+    description: 'Managing AI risks with appropriate responses',
+    subcategories: [
+      { id: 'MG-1', name: 'Risk Treatment', patterns: skills.filter(s => s.data.category === 'P6').slice(0, 6), rationale: 'Social engineering patterns require human-in-the-loop controls' },
+      { id: 'MG-2', name: 'Incident Response', patterns: bySeverity('Critical').slice(0, 6), rationale: 'Critical patterns need documented incident response procedures' },
+      { id: 'MG-3', name: 'Continuous Improvement', patterns: skills.filter(s => s.data.category === 'P7').slice(0, 6), rationale: 'Supply chain patterns demand ongoing vendor assessment' },
+    ]
+  }
+];
+
+// EU AI Act mapping
+const euAiActMapping = [
+  {
+    article: 'Art. 6-7',
+    title: 'High-Risk AI Classification',
+    risk: 'high',
+    patterns: bySeverity('Critical').concat(bySeverity('High')).slice(0, 12),
+    description: 'AI agents handling critical infrastructure, employment, law enforcement, or financial services fall under high-risk classification. These patterns demonstrate why.',
+  },
+  {
+    article: 'Art. 9',
+    title: 'Risk Management System',
+    risk: 'high',
+    patterns: skills.slice(0, 10),
+    description: 'Requires systematic identification, analysis, and mitigation of known and foreseeable risks. TroySkills provides the threat intelligence needed for compliance.',
+  },
+  {
+    article: 'Art. 10',
+    title: 'Data Governance',
+    risk: 'high',
+    patterns: skills.filter(s => s.data.category === 'P2').slice(0, 8),
+    description: 'Training, validation, and testing data must be subject to appropriate governance. Data exfiltration patterns show how agents can compromise data integrity.',
+  },
+  {
+    article: 'Art. 13',
+    title: 'Transparency',
+    risk: 'high',
+    patterns: skills.filter(s => s.data.category === 'P6').slice(0, 6),
+    description: 'High-risk AI systems must be transparent. Social engineering patterns demonstrate deceptive AI behaviors that violate transparency requirements.',
+  },
+  {
+    article: 'Art. 14',
+    title: 'Human Oversight',
+    risk: 'high',
+    patterns: skills.filter(s => s.data.category === 'P3').slice(0, 8),
+    description: 'Human oversight mechanisms required. Privilege escalation patterns show how agents bypass human controls.',
+  },
+  {
+    article: 'Art. 15',
+    title: 'Accuracy, Robustness, Cybersecurity',
+    risk: 'high',
+    patterns: skills.filter(s => s.data.category === 'P1').concat(skills.filter(s => s.data.category === 'P4')).slice(0, 10),
+    description: 'AI systems must be resilient to adversarial attacks. Prompt injection and malicious script patterns are directly relevant.',
+  },
+  {
+    article: 'Art. 52',
+    title: 'Transparency for AI Interactions',
+    risk: 'limited',
+    patterns: skills.filter(s => s.data.tags?.includes('impersonation')).slice(0, 4),
+    description: 'Users must be informed when interacting with AI. Impersonation patterns show how this requirement can be circumvented.',
+  },
+];
+
+// OWASP LLM Top 10 mapping
+const owaspMapping = [
+  { id: 'LLM01', name: 'Prompt Injection', patterns: skills.filter(s => s.data.category === 'P1'), description: 'Direct and indirect prompt injection attacks that manipulate LLM behavior' },
+  { id: 'LLM02', name: 'Insecure Output Handling', patterns: skills.filter(s => s.data.category === 'P4').slice(0, 8), description: 'Malicious outputs that execute unintended actions in downstream systems' },
+  { id: 'LLM03', name: 'Training Data Poisoning', patterns: skills.filter(s => s.data.tags?.some(t => ['poisoning','training','supply-chain'].includes(t))).slice(0, 6), description: 'Manipulation of training data to embed backdoors or bias' },
+  { id: 'LLM04', name: 'Model Denial of Service', patterns: skills.filter(s => s.data.tags?.some(t => ['dos','resource-exhaustion','denial-of-service'].includes(t))).slice(0, 6), description: 'Resource exhaustion attacks targeting model inference' },
+  { id: 'LLM05', name: 'Supply Chain Vulnerabilities', patterns: skills.filter(s => s.data.category === 'P7'), description: 'Compromised components, plugins, or dependencies in AI supply chain' },
+  { id: 'LLM06', name: 'Sensitive Information Disclosure', patterns: skills.filter(s => s.data.category === 'P2'), description: 'Unauthorized extraction of sensitive data through AI agents' },
+  { id: 'LLM07', name: 'Insecure Plugin Design', patterns: skills.filter(s => s.data.tags?.some(t => ['plugin','tool','skill','mcp'].includes(t))).slice(0, 8), description: 'Exploitable plugins and tool integrations that expand attack surface' },
+  { id: 'LLM08', name: 'Excessive Agency', patterns: skills.filter(s => s.data.category === 'P3'), description: 'Over-permissioned agents that can perform unintended actions' },
+  { id: 'LLM09', name: 'Overreliance', patterns: skills.filter(s => s.data.category === 'P6').slice(0, 6), description: 'Social engineering exploiting trust in AI-generated content' },
+  { id: 'LLM10', name: 'Model Theft', patterns: skills.filter(s => s.data.tags?.some(t => ['model-theft','extraction','intellectual-property'].includes(t))).slice(0, 4), description: 'Unauthorized extraction of model weights, parameters, or capabilities' },
+];
+
+// SOC 2 Trust Service Criteria mapping
+const soc2Mapping = [
+  {
+    criteria: 'Security (CC)',
+    principles: [
+      { id: 'CC6.1', name: 'Logical Access Controls', patterns: skills.filter(s => s.data.category === 'P3').slice(0, 8), description: 'Agent privilege escalation directly violates access control requirements' },
+      { id: 'CC6.6', name: 'System Boundary Protection', patterns: skills.filter(s => s.data.category === 'P2').slice(0, 6), description: 'Data exfiltration patterns demonstrate boundary control failures' },
+      { id: 'CC7.2', name: 'Security Event Monitoring', patterns: bySeverity('Critical').slice(0, 6), description: 'Critical patterns must be detectable by security monitoring' },
+      { id: 'CC8.1', name: 'Change Management', patterns: skills.filter(s => s.data.category === 'P5').slice(0, 6), description: 'Config tampering bypasses change management controls' },
+    ]
+  },
+  {
+    criteria: 'Availability (A)',
+    principles: [
+      { id: 'A1.2', name: 'Recovery Objectives', patterns: skills.filter(s => s.data.tags?.some(t => ['dos','availability','disruption'].includes(t))).slice(0, 4), description: 'Agent DoS attacks affect availability SLAs' },
+    ]
+  },
+  {
+    criteria: 'Processing Integrity (PI)',
+    principles: [
+      { id: 'PI1.1', name: 'Processing Accuracy', patterns: skills.filter(s => s.data.category === 'P1').slice(0, 8), description: 'Prompt injection compromises processing integrity of AI outputs' },
+      { id: 'PI1.4', name: 'Output Completeness', patterns: skills.filter(s => s.data.category === 'P6').slice(0, 4), description: 'Social engineering causes incomplete or misleading outputs' },
+    ]
+  },
+  {
+    criteria: 'Confidentiality (C)',
+    principles: [
+      { id: 'C1.1', name: 'Confidential Information Identification', patterns: skills.filter(s => s.data.category === 'P2').slice(0, 6), description: 'Data exfiltration targets confidential information assets' },
+      { id: 'C1.2', name: 'Confidential Information Disposal', patterns: skills.filter(s => s.data.tags?.some(t => ['memory','context','persistence'].includes(t))).slice(0, 4), description: 'Agent memory patterns affect data retention compliance' },
+    ]
+  },
+  {
+    criteria: 'Privacy (P)',
+    principles: [
+      { id: 'P3.1', name: 'Personal Information Collection', patterns: skills.filter(s => s.data.tags?.some(t => ['pii','privacy','personal-data'].includes(t))).slice(0, 4), description: 'Agent-based PII collection and exfiltration risks' },
+      { id: 'P6.1', name: 'Data Quality', patterns: skills.filter(s => s.data.category === 'P1').slice(0, 4), description: 'Prompt injection can cause agents to generate inaccurate personal data' },
+    ]
+  },
+];
+
+const functionColors: Record<string, string> = {
+  'GOVERN': 'blue',
+  'MAP': 'purple',
+  'MEASURE': 'green',
+  'MANAGE': 'orange',
+};
+---
+
+<Layout title="Compliance Mapping — TroySkills">
+  <!-- Hero -->
+  <section class="max-w-6xl mx-auto px-4 py-16">
+    <nav class="text-sm text-slate-500 mb-8">
+      <a href="/" class="hover:text-slate-300">Home</a>
+      <span class="mx-2">/</span>
+      <span class="text-slate-300">Compliance</span>
+    </nav>
+    
+    <div class="text-center mb-16">
+      <div class="inline-block px-4 py-1.5 bg-blue-500/10 text-blue-400 text-sm font-medium rounded-full mb-6 border border-blue-500/20">
+        📋 Compliance & Regulatory Mapping
+      </div>
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">
+        Framework <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Compliance</span> Mapping
+      </h1>
+      <p class="text-lg text-slate-400 max-w-3xl mx-auto">
+        Map {totalPatterns} TroySkills attack patterns to major compliance frameworks. 
+        Demonstrate due diligence and build your AI risk management program on concrete threat intelligence.
+      </p>
+    </div>
+
+    <!-- Framework Navigation -->
+    <div class="flex flex-wrap justify-center gap-3 mb-16">
+      <a href="#nist" class="px-5 py-2.5 bg-blue-500/10 text-blue-400 rounded-lg border border-blue-500/20 hover:bg-blue-500/20 transition-colors font-medium">
+        🏛️ NIST AI RMF
+      </a>
+      <a href="#euaiact" class="px-5 py-2.5 bg-purple-500/10 text-purple-400 rounded-lg border border-purple-500/20 hover:bg-purple-500/20 transition-colors font-medium">
+        🇪🇺 EU AI Act
+      </a>
+      <a href="#owasp" class="px-5 py-2.5 bg-orange-500/10 text-orange-400 rounded-lg border border-orange-500/20 hover:bg-orange-500/20 transition-colors font-medium">
+        🐝 OWASP LLM Top 10
+      </a>
+      <a href="#soc2" class="px-5 py-2.5 bg-green-500/10 text-green-400 rounded-lg border border-green-500/20 hover:bg-green-500/20 transition-colors font-medium">
+        🔒 SOC 2
+      </a>
+    </div>
+
+    <!-- Coverage Summary -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+      <div class="bg-slate-900 border border-blue-500/20 rounded-xl p-6 text-center">
+        <div class="text-3xl font-bold text-blue-400">4</div>
+        <div class="text-sm text-slate-400 mt-1">NIST AI RMF Functions</div>
+        <div class="text-xs text-slate-500 mt-1">11 subcategories mapped</div>
+      </div>
+      <div class="bg-slate-900 border border-purple-500/20 rounded-xl p-6 text-center">
+        <div class="text-3xl font-bold text-purple-400">7</div>
+        <div class="text-sm text-slate-400 mt-1">EU AI Act Articles</div>
+        <div class="text-xs text-slate-500 mt-1">High & limited risk</div>
+      </div>
+      <div class="bg-slate-900 border border-orange-500/20 rounded-xl p-6 text-center">
+        <div class="text-3xl font-bold text-orange-400">10/10</div>
+        <div class="text-sm text-slate-400 mt-1">OWASP LLM Top 10</div>
+        <div class="text-xs text-slate-500 mt-1">Full coverage</div>
+      </div>
+      <div class="bg-slate-900 border border-green-500/20 rounded-xl p-6 text-center">
+        <div class="text-3xl font-bold text-green-400">5</div>
+        <div class="text-sm text-slate-400 mt-1">SOC 2 Trust Criteria</div>
+        <div class="text-xs text-slate-500 mt-1">12 principles mapped</div>
+      </div>
+    </div>
+
+    <!-- NIST AI RMF Section -->
+    <section id="nist" class="mb-20 scroll-mt-8">
+      <div class="flex items-center gap-3 mb-8">
+        <span class="text-3xl">🏛️</span>
+        <div>
+          <h2 class="text-2xl font-bold">NIST AI Risk Management Framework (AI RMF 1.0)</h2>
+          <p class="text-slate-400 text-sm">Voluntary framework for managing AI risks throughout the AI lifecycle</p>
+        </div>
+      </div>
+
+      {nistMapping.map(func => (
+        <div class="mb-10">
+          <div class={`inline-block px-3 py-1 rounded-md text-sm font-bold mb-4 ${
+            func.function === 'GOVERN' ? 'bg-blue-500/20 text-blue-400' :
+            func.function === 'MAP' ? 'bg-purple-500/20 text-purple-400' :
+            func.function === 'MEASURE' ? 'bg-green-500/20 text-green-400' :
+            'bg-orange-500/20 text-orange-400'
+          }`}>
+            {func.function}
+          </div>
+          <p class="text-slate-400 text-sm mb-4">{func.description}</p>
+          
+          <div class="space-y-3">
+            {func.subcategories.map(sub => (
+              <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+                <div class="flex items-start justify-between mb-2">
+                  <div>
+                    <span class="font-mono text-sm text-slate-300">{sub.id}</span>
+                    <span class="text-slate-400 mx-2">—</span>
+                    <span class="text-slate-200">{sub.name}</span>
+                  </div>
+                  <span class="text-xs bg-slate-800 text-slate-400 px-2 py-1 rounded">{sub.patterns.length} patterns</span>
+                </div>
+                <p class="text-sm text-slate-500 mb-3">{sub.rationale}</p>
+                <div class="flex flex-wrap gap-1.5">
+                  {sub.patterns.map(p => (
+                    <a href={`/skill/${p.data.id}`} class={`text-xs px-2 py-0.5 rounded font-mono hover:opacity-80 transition-opacity ${
+                      p.data.severity === 'Critical' ? 'bg-red-500/20 text-red-400' :
+                      p.data.severity === 'High' ? 'bg-orange-500/20 text-orange-400' :
+                      p.data.severity === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                      'bg-green-500/20 text-green-400'
+                    }`}>
+                      {p.data.id}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+
+    <!-- EU AI Act Section -->
+    <section id="euaiact" class="mb-20 scroll-mt-8">
+      <div class="flex items-center gap-3 mb-8">
+        <span class="text-3xl">🇪🇺</span>
+        <div>
+          <h2 class="text-2xl font-bold">EU AI Act</h2>
+          <p class="text-slate-400 text-sm">World's first comprehensive AI regulation — effective August 2025</p>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        {euAiActMapping.map(article => (
+          <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+            <div class="flex items-start justify-between mb-3">
+              <div>
+                <span class={`inline-block px-2 py-0.5 rounded text-xs font-bold mr-2 ${
+                  article.risk === 'high' ? 'bg-red-500/20 text-red-400' :
+                  article.risk === 'limited' ? 'bg-yellow-500/20 text-yellow-400' :
+                  'bg-green-500/20 text-green-400'
+                }`}>
+                  {article.risk.toUpperCase()} RISK
+                </span>
+                <span class="font-mono text-purple-400 text-sm">{article.article}</span>
+              </div>
+              <span class="text-xs bg-slate-800 text-slate-400 px-2 py-1 rounded">{article.patterns.length} patterns</span>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-200 mb-2">{article.title}</h3>
+            <p class="text-sm text-slate-400 mb-3">{article.description}</p>
+            <div class="flex flex-wrap gap-1.5">
+              {article.patterns.map(p => (
+                <a href={`/skill/${p.data.id}`} class={`text-xs px-2 py-0.5 rounded font-mono hover:opacity-80 transition-opacity ${
+                  p.data.severity === 'Critical' ? 'bg-red-500/20 text-red-400' :
+                  p.data.severity === 'High' ? 'bg-orange-500/20 text-orange-400' :
+                  p.data.severity === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                  'bg-green-500/20 text-green-400'
+                }`}>
+                  {p.data.id}
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- OWASP LLM Top 10 Section -->
+    <section id="owasp" class="mb-20 scroll-mt-8">
+      <div class="flex items-center gap-3 mb-8">
+        <span class="text-3xl">🐝</span>
+        <div>
+          <h2 class="text-2xl font-bold">OWASP Top 10 for LLM Applications</h2>
+          <p class="text-slate-400 text-sm">Standard awareness document for LLM security risks (v2025)</p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        {owaspMapping.map((item, idx) => (
+          <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+            <div class="flex items-start justify-between mb-2">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl font-bold text-orange-500/60">#{idx + 1}</span>
+                <div>
+                  <span class="font-mono text-sm text-orange-400">{item.id}</span>
+                  <h3 class="text-lg font-semibold text-slate-200">{item.name}</h3>
+                </div>
+              </div>
+              <span class="text-xs bg-slate-800 text-slate-400 px-2 py-1 rounded">{item.patterns.length} patterns</span>
+            </div>
+            <p class="text-sm text-slate-400 mb-3">{item.description}</p>
+            <div class="flex flex-wrap gap-1.5">
+              {item.patterns.map(p => (
+                <a href={`/skill/${p.data.id}`} class={`text-xs px-2 py-0.5 rounded font-mono hover:opacity-80 transition-opacity ${
+                  p.data.severity === 'Critical' ? 'bg-red-500/20 text-red-400' :
+                  p.data.severity === 'High' ? 'bg-orange-500/20 text-orange-400' :
+                  p.data.severity === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                  'bg-green-500/20 text-green-400'
+                }`}>
+                  {p.data.id}
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- SOC 2 Section -->
+    <section id="soc2" class="mb-20 scroll-mt-8">
+      <div class="flex items-center gap-3 mb-8">
+        <span class="text-3xl">🔒</span>
+        <div>
+          <h2 class="text-2xl font-bold">SOC 2 Trust Service Criteria</h2>
+          <p class="text-slate-400 text-sm">AICPA framework for service organization security controls</p>
+        </div>
+      </div>
+
+      {soc2Mapping.map(criteria => (
+        <div class="mb-8">
+          <h3 class={`text-lg font-bold mb-4 ${
+            criteria.criteria.includes('Security') ? 'text-green-400' :
+            criteria.criteria.includes('Availability') ? 'text-blue-400' :
+            criteria.criteria.includes('Processing') ? 'text-purple-400' :
+            criteria.criteria.includes('Confidentiality') ? 'text-orange-400' :
+            'text-pink-400'
+          }`}>
+            {criteria.criteria}
+          </h3>
+          <div class="space-y-3">
+            {criteria.principles.map(p => (
+              <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+                <div class="flex items-start justify-between mb-2">
+                  <div>
+                    <span class="font-mono text-sm text-green-400">{p.id}</span>
+                    <span class="text-slate-400 mx-2">—</span>
+                    <span class="text-slate-200">{p.name}</span>
+                  </div>
+                  <span class="text-xs bg-slate-800 text-slate-400 px-2 py-1 rounded">{p.patterns.length} patterns</span>
+                </div>
+                <p class="text-sm text-slate-500 mb-3">{p.description}</p>
+                <div class="flex flex-wrap gap-1.5">
+                  {p.patterns.map(pat => (
+                    <a href={`/skill/${pat.data.id}`} class={`text-xs px-2 py-0.5 rounded font-mono hover:opacity-80 transition-opacity ${
+                      pat.data.severity === 'Critical' ? 'bg-red-500/20 text-red-400' :
+                      pat.data.severity === 'High' ? 'bg-orange-500/20 text-orange-400' :
+                      pat.data.severity === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                      'bg-green-500/20 text-green-400'
+                    }`}>
+                      {pat.data.id}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+
+    <!-- How to Use This -->
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl p-8 mb-16">
+      <h2 class="text-2xl font-bold mb-4">📖 How to Use This Mapping</h2>
+      <div class="grid md:grid-cols-2 gap-6 text-sm text-slate-400">
+        <div>
+          <h3 class="text-slate-200 font-semibold mb-2">For Compliance Officers</h3>
+          <ul class="space-y-2 list-disc list-inside">
+            <li>Reference specific TroySkills pattern IDs in risk assessments</li>
+            <li>Use severity ratings to prioritize mitigation efforts</li>
+            <li>Map organizational AI deployments against relevant threat patterns</li>
+            <li>Document threat awareness as evidence of due diligence</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-slate-200 font-semibold mb-2">For Security Engineers</h3>
+          <ul class="space-y-2 list-disc list-inside">
+            <li>Implement detection rules based on pattern technical details</li>
+            <li>Build test cases from attack vectors for each compliance requirement</li>
+            <li>Use the <a href="/api" class="text-blue-400 hover:underline">TroySkills API</a> to integrate threat data into security tooling</li>
+            <li>Cross-reference with <a href="/mitre-mapping" class="text-blue-400 hover:underline">MITRE ATT&CK mapping</a> for defense-in-depth</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="text-center">
+      <p class="text-slate-400 mb-4">Need a custom compliance report for your organization?</p>
+      <a href="/contribute" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg transition-all">
+        Contribute to TroySkills →
+      </a>
+    </div>
+  </section>
+</Layout>
