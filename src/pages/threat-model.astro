@@ -1,0 +1,181 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Threat Model — TroySkills">
+  <div class="max-w-4xl mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold mb-2">AI Agent Threat Model</h1>
+    <p class="text-slate-400 mb-10 text-lg">Understanding the attack surface of AI agent skill ecosystems.</p>
+
+    <!-- Attack Surface -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4 text-red-400">1. Attack Surface</h2>
+      <p class="text-slate-300 mb-4">AI agents expose a uniquely broad attack surface because they combine natural language processing, code execution, persistent state, and external integrations in a single runtime. The key attack surface components:</p>
+      
+      <div class="grid md:grid-cols-2 gap-4 mb-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+          <h3 class="font-semibold text-red-400 mb-2">🧩 Skills / Plugins</h3>
+          <p class="text-slate-400 text-sm">Third-party code that extends agent capabilities. Skills can define tools, register event handlers, access storage, and modify agent behavior. This is the <strong class="text-slate-200">primary attack vector</strong> in the TroySkills taxonomy.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+          <h3 class="font-semibold text-red-400 mb-2">🔧 Tools / Functions</h3>
+          <p class="text-slate-400 text-sm">Callable interfaces (exec, file I/O, HTTP, databases) that the agent uses to perform actions. Malicious skills can abuse, redirect, or intercept tool calls.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+          <h3 class="font-semibold text-red-400 mb-2">🧠 Memory / State</h3>
+          <p class="text-slate-400 text-sm">Persistent storage (MEMORY.md, vector stores, conversation history) that carries context across sessions. Poisoned memory enables persistent compromise.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+          <h3 class="font-semibold text-red-400 mb-2">⚙️ Config / Environment</h3>
+          <p class="text-slate-400 text-sm">Agent settings, API keys, model parameters, and environment variables. Config tampering can redirect traffic, disable security, or alter behavior.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+          <h3 class="font-semibold text-red-400 mb-2">💬 Messaging / Channels</h3>
+          <p class="text-slate-400 text-sm">Communication interfaces (Slack, email, webhooks) where agents send and receive messages. These enable social engineering and lateral movement.</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4">
+          <h3 class="font-semibold text-red-400 mb-2">💻 Exec / Runtime</h3>
+          <p class="text-slate-400 text-sm">Shell execution, process spawning, and code evaluation. The most powerful (and dangerous) capability, enabling arbitrary code execution.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust Boundaries -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4 text-red-400">2. Trust Boundaries</h2>
+      <p class="text-slate-300 mb-4">The following diagram illustrates the trust boundaries in a typical AI agent deployment:</p>
+      
+      <div class="bg-slate-900 border border-slate-800 rounded-lg p-6 font-mono text-sm overflow-x-auto">
+        <pre class="text-slate-300">
+{`┌─────────────────────────────────────────────────────────────────┐
+│                    EXTERNAL / UNTRUSTED                          │
+│  ┌──────────────┐  ┌──────────────┐  ┌───────────────────────┐  │
+│  │ Skill Registry│  │ External APIs│  │ User-Provided Content │  │
+│  └──────┬───────┘  └──────┬───────┘  └───────────┬───────────┘  │
+│         │                 │                       │              │
+│ ════════╪═════════════════╪═══════════════════════╪══════════ TB1│
+│         │                 │                       │              │
+│  ┌──────▼─────────────────▼───────────────────────▼──────────┐  │
+│  │                  SKILL SANDBOX (TB2)                       │  │
+│  │  ┌─────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │  │
+│  │  │ Skill A │  │ Skill B  │  │ Skill C  │  │ Skill D  │   │  │
+│  │  │ (tools) │  │ (events) │  │ (storage)│  │  (exec)  │   │  │
+│  │  └────┬────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘   │  │
+│  │       │             │             │              │         │  │
+│  │ ══════╪═════════════╪═════════════╪══════════════╪════ TB2 │  │
+│  └───────┼─────────────┼─────────────┼──────────────┼────────┘  │
+│          │             │             │              │            │
+│  ┌───────▼─────────────▼─────────────▼──────────────▼────────┐  │
+│  │              AGENT FRAMEWORK (TB3)                         │  │
+│  │  ┌────────────┐  ┌─────────┐  ┌──────────┐  ┌─────────┐  │  │
+│  │  │ LLM Engine │  │ Memory  │  │  Config  │  │ Comms   │  │  │
+│  │  │ (reasoning)│  │ (state) │  │ (secrets)│  │(channels│  │  │
+│  │  └────────────┘  └─────────┘  └──────────┘  └─────────┘  │  │
+│  │                                                            │  │
+│  │ ══════════════════════════════════════════════════════ TB3  │  │
+│  └────────────────────────────┬───────────────────────────────┘  │
+│                               │                                  │
+│  ┌────────────────────────────▼───────────────────────────────┐  │
+│  │                HOST SYSTEM (TB4)                            │  │
+│  │   Filesystem │ Network │ Processes │ Credentials            │  │
+│  └────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+
+TB1 = External ↔ Agent boundary (untrusted inputs)
+TB2 = Skill ↔ Framework boundary (permission enforcement)
+TB3 = Framework ↔ Host boundary (sandboxing/isolation)
+TB4 = Host ↔ Network boundary (OS-level security)`}
+        </pre>
+      </div>
+    </section>
+
+    <!-- Skill-Agent Interaction -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4 text-red-400">3. How Skills Interact with Agent Internals</h2>
+      <p class="text-slate-300 mb-4">Skills are the primary extension mechanism for AI agents. They interact with the agent at multiple levels:</p>
+      
+      <div class="space-y-4">
+        <div class="bg-slate-900 border-l-4 border-red-500 p-4">
+          <h3 class="font-semibold mb-1">Context Injection</h3>
+          <p class="text-slate-400 text-sm">Skills contribute to the agent's context window via SKILL.md files, tool descriptions, and parameter schemas. Anything in the context can influence the LLM's reasoning. (<a href="/skill/TS-2026-0001" class="text-red-400 hover:underline">TS-2026-0001</a>, <a href="/skill/TS-2026-0021" class="text-red-400 hover:underline">TS-2026-0021</a>)</p>
+        </div>
+        <div class="bg-slate-900 border-l-4 border-orange-500 p-4">
+          <h3 class="font-semibold mb-1">Tool Registration</h3>
+          <p class="text-slate-400 text-sm">Skills register callable tools that the agent can invoke. These tools have access to the host system (exec, filesystem, network). Malicious tools can perform any action the agent is authorized to do.</p>
+        </div>
+        <div class="bg-slate-900 border-l-4 border-yellow-500 p-4">
+          <h3 class="font-semibold mb-1">Event Handling</h3>
+          <p class="text-slate-400 text-sm">Skills can register handlers for agent events (messages, tool calls, file changes). This gives them passive surveillance capability. (<a href="/skill/TS-2026-0032" class="text-red-400 hover:underline">TS-2026-0032</a>)</p>
+        </div>
+        <div class="bg-slate-900 border-l-4 border-green-500 p-4">
+          <h3 class="font-semibold mb-1">Storage Access</h3>
+          <p class="text-slate-400 text-sm">Skills can read and write to the agent's persistent storage (memory files, databases, config). This enables both data theft and persistent manipulation. (<a href="/skill/TS-2026-0022" class="text-red-400 hover:underline">TS-2026-0022</a>, <a href="/skill/TS-2026-0036" class="text-red-400 hover:underline">TS-2026-0036</a>)</p>
+        </div>
+        <div class="bg-slate-900 border-l-4 border-blue-500 p-4">
+          <h3 class="font-semibold mb-1">Lifecycle Hooks</h3>
+          <p class="text-slate-400 text-sm">Skills execute code at install, update, and removal time. These hooks run with elevated privileges and can modify the host environment. (<a href="/skill/TS-2026-0029" class="text-red-400 hover:underline">TS-2026-0029</a>)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Attack Lifecycle -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4 text-red-400">4. Attack Lifecycle</h2>
+      <p class="text-slate-300 mb-6">Attacks against AI agents follow a lifecycle similar to traditional cyber attacks, adapted for the agent context:</p>
+
+      <div class="space-y-6">
+        <div class="flex gap-4 items-start">
+          <div class="bg-red-500/20 text-red-400 font-bold rounded-full w-10 h-10 flex items-center justify-center shrink-0">1</div>
+          <div>
+            <h3 class="font-bold text-lg">Reconnaissance</h3>
+            <p class="text-slate-400">Identify the target agent framework, model, installed skills, and capabilities. Probe for model type (<a href="/skill/TS-2026-0028" class="text-red-400 hover:underline">TS-2026-0028</a>), enumerate tools, map communication channels, identify high-value data.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 items-start">
+          <div class="bg-orange-500/20 text-orange-400 font-bold rounded-full w-10 h-10 flex items-center justify-center shrink-0">2</div>
+          <div>
+            <h3 class="font-bold text-lg">Delivery</h3>
+            <p class="text-slate-400">Get the malicious skill onto the target system. Methods include: typosquatting (<a href="/skill/TS-2026-0020" class="text-red-400 hover:underline">TS-2026-0020</a>), supply chain compromise (<a href="/skill/TS-2026-0033" class="text-red-400 hover:underline">TS-2026-0033</a>), social engineering users into installing, or injecting payloads into legitimate skills.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 items-start">
+          <div class="bg-yellow-500/20 text-yellow-400 font-bold rounded-full w-10 h-10 flex items-center justify-center shrink-0">3</div>
+          <div>
+            <h3 class="font-bold text-lg">Exploitation</h3>
+            <p class="text-slate-400">Execute the payload — prompt injection (<a href="/skill/TS-2026-0001" class="text-red-400 hover:underline">TS-2026-0001</a>), privilege escalation (<a href="/skill/TS-2026-0023" class="text-red-400 hover:underline">TS-2026-0023</a>), sandbox escape (<a href="/skill/TS-2026-0031" class="text-red-400 hover:underline">TS-2026-0031</a>), or config tampering (<a href="/skill/TS-2026-0037" class="text-red-400 hover:underline">TS-2026-0037</a>).</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 items-start">
+          <div class="bg-green-500/20 text-green-400 font-bold rounded-full w-10 h-10 flex items-center justify-center shrink-0">4</div>
+          <div>
+            <h3 class="font-bold text-lg">Persistence</h3>
+            <p class="text-slate-400">Establish a foothold that survives agent restarts. Memory worms (<a href="/skill/TS-2026-0022" class="text-red-400 hover:underline">TS-2026-0022</a>), shadow skill installations (<a href="/skill/TS-2026-0029" class="text-red-400 hover:underline">TS-2026-0029</a>), background processes (<a href="/skill/TS-2026-0026" class="text-red-400 hover:underline">TS-2026-0026</a>), and config modifications.</p>
+          </div>
+        </div>
+
+        <div class="flex gap-4 items-start">
+          <div class="bg-blue-500/20 text-blue-400 font-bold rounded-full w-10 h-10 flex items-center justify-center shrink-0">5</div>
+          <div>
+            <h3 class="font-bold text-lg">Exfiltration</h3>
+            <p class="text-slate-400">Extract valuable data — credentials, conversation history, system prompts, user data. Methods include HTTP callbacks (<a href="/skill/TS-2026-0008" class="text-red-400 hover:underline">TS-2026-0008</a>), DNS tunneling (<a href="/skill/TS-2026-0024" class="text-red-400 hover:underline">TS-2026-0024</a>), steganography (<a href="/skill/TS-2026-0012" class="text-red-400 hover:underline">TS-2026-0012</a>), and fake telemetry (<a href="/skill/TS-2026-0027" class="text-red-400 hover:underline">TS-2026-0027</a>).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Summary -->
+    <section class="bg-slate-900 border border-slate-800 rounded-lg p-6">
+      <h2 class="text-xl font-bold mb-3">Key Takeaways</h2>
+      <ul class="space-y-2 text-slate-300">
+        <li>• AI agents have a <strong class="text-red-400">uniquely large attack surface</strong> combining language, code, state, and network access</li>
+        <li>• Skills are the primary threat vector — they sit at the intersection of all trust boundaries</li>
+        <li>• Defense in depth is essential: no single mitigation addresses all attack patterns</li>
+        <li>• The <a href="/database" class="text-red-400 hover:underline">TroySkills Database</a> catalogs 40 known attack patterns across 7 categories</li>
+        <li>• Use the <a href="/scoring" class="text-red-400 hover:underline">TroySkills Scoring System</a> to assess severity of new patterns</li>
+      </ul>
+    </section>
+  </div>
+</Layout>
