@@ -1,0 +1,152 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { getCollection } from 'astro:content';
+
+const skills = await getCollection('skills');
+const total = skills.length;
+
+const categoryNames: Record<string, string> = {
+  P1: 'Prompt Injection',
+  P2: 'Data Exfiltration',
+  P3: 'Privilege Escalation',
+  P4: 'Malicious Scripts',
+  P5: 'Config Tampering',
+  P6: 'Social Engineering',
+  P7: 'Supply Chain',
+};
+
+// Category distribution
+const catCounts: Record<string, number> = {};
+skills.forEach(s => { catCounts[s.data.category] = (catCounts[s.data.category] || 0) + 1; });
+const categories = Object.entries(catCounts)
+  .map(([id, count]) => ({ id, name: categoryNames[id] || id, count, pct: ((count / total) * 100).toFixed(1) }))
+  .sort((a, b) => b.count - a.count);
+
+// Severity distribution
+const sevCounts: Record<string, number> = {};
+skills.forEach(s => { sevCounts[s.data.severity] = (sevCounts[s.data.severity] || 0) + 1; });
+const severities = Object.entries(sevCounts)
+  .map(([name, count]) => ({ name, count, pct: ((count / total) * 100).toFixed(1) }))
+  .sort((a, b) => b.count - a.count);
+const sevColors: Record<string, string> = { Critical: 'bg-red-500', High: 'bg-orange-500', Medium: 'bg-yellow-500', Low: 'bg-green-500' };
+
+// Tags
+const tagCounts: Record<string, number> = {};
+skills.forEach(s => {
+  (s.data.tags || []).forEach((t: string) => { tagCounts[t] = (tagCounts[t] || 0) + 1; });
+});
+const topTags = Object.entries(tagCounts)
+  .map(([tag, count]) => ({ tag, count }))
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 25);
+const maxTagCount = topTags[0]?.count || 1;
+
+// Timeline by month
+const monthCounts: Record<string, number> = {};
+skills.forEach(s => {
+  const d = s.data.date instanceof Date ? s.data.date.toISOString().slice(0, 7) : String(s.data.date).slice(0, 7);
+  monthCounts[d] = (monthCounts[d] || 0) + 1;
+});
+const timeline = Object.entries(monthCounts).sort((a, b) => a[0].localeCompare(b[0]));
+const maxMonth = Math.max(...timeline.map(t => t[1]));
+
+const avgPerCategory = (total / Object.keys(catCounts).length).toFixed(1);
+---
+
+<Layout title="Statistics — TroySkills" description="TroySkills database statistics: category distribution, severity breakdown, tag analysis, and timeline.">
+  <section class="max-w-4xl mx-auto px-4 py-12">
+    <Breadcrumb items={[{ label: "Statistics" }]} />
+    <h1 class="text-3xl font-bold mb-2">Database Statistics</h1>
+    <p class="text-slate-400 mb-8">Overview of the TroySkills pattern database — {total} patterns across {Object.keys(catCounts).length} categories.</p>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+        <div class="text-3xl font-bold text-red-400">{total}</div>
+        <div class="text-sm text-slate-400">Total Patterns</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+        <div class="text-3xl font-bold text-red-400">{Object.keys(catCounts).length}</div>
+        <div class="text-sm text-slate-400">Categories</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+        <div class="text-3xl font-bold text-red-400">{avgPerCategory}</div>
+        <div class="text-sm text-slate-400">Avg per Category</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+        <div class="text-3xl font-bold text-red-400">{Object.keys(tagCounts).length}</div>
+        <div class="text-sm text-slate-400">Unique Tags</div>
+      </div>
+    </div>
+
+    <!-- Category Distribution -->
+    <h2 class="text-xl font-bold mb-4">Category Distribution</h2>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-10">
+      {categories.map(c => (
+        <div class="mb-3 last:mb-0">
+          <div class="flex justify-between text-sm mb-1">
+            <span class="text-slate-200"><span class="text-red-400 font-mono">{c.id}</span> — {c.name}</span>
+            <span class="text-slate-400">{c.count} ({c.pct}%)</span>
+          </div>
+          <div class="w-full bg-slate-800 rounded-full h-3">
+            <div class="bg-red-500 h-3 rounded-full transition-all" style={`width: ${(c.count / total) * 100}%`}></div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Severity Distribution -->
+    <h2 class="text-xl font-bold mb-4">Severity Distribution</h2>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-10">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {severities.map(s => (
+          <div class="text-center">
+            <div class={`inline-block w-16 h-16 rounded-full ${sevColors[s.name] || 'bg-slate-500'} flex items-center justify-center mb-2 mx-auto`}>
+              <span class="text-xl font-bold text-white" style="line-height:4rem; display:block; width:4rem; text-align:center;">{s.count}</span>
+            </div>
+            <div class="text-sm font-medium text-slate-200">{s.name}</div>
+            <div class="text-xs text-slate-400">{s.pct}%</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Top Tags -->
+    <h2 class="text-xl font-bold mb-4">Most Common Tags</h2>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-10">
+      <div class="flex flex-wrap gap-2">
+        {topTags.map(t => {
+          const opacity = 0.4 + (t.count / maxTagCount) * 0.6;
+          return (
+            <span class="px-3 py-1 rounded-full text-sm border border-red-500/30 text-red-300"
+                  style={`opacity: ${opacity}; font-size: ${0.75 + (t.count / maxTagCount) * 0.35}rem`}>
+              {t.tag} <span class="text-slate-500">×{t.count}</span>
+            </span>
+          );
+        })}
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <h2 class="text-xl font-bold mb-4">Pattern Timeline</h2>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-10">
+      {timeline.length <= 1 ? (
+        <p class="text-slate-400 text-sm">All {total} patterns were added in {timeline[0]?.[0] || 'N/A'}.</p>
+      ) : (
+        <div class="space-y-2">
+          {timeline.map(([month, count]) => (
+            <div class="flex items-center gap-3">
+              <span class="text-sm text-slate-400 font-mono w-20">{month}</span>
+              <div class="flex-1 bg-slate-800 rounded-full h-4">
+                <div class="bg-red-500 h-4 rounded-full" style={`width: ${(count / maxMonth) * 100}%`}></div>
+              </div>
+              <span class="text-sm text-slate-400 w-8 text-right">{count}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+
+  </section>
+</Layout>

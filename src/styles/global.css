@@ -35,18 +35,23 @@ body {
 
 /* Print styles for skill detail pages */
 @media print {
-  nav, footer, #mobile-menu, #mobile-menu-btn, .no-print { display: none !important; }
-  body { background: white !important; color: black !important; font-size: 12pt; }
+  nav, footer, #mobile-menu, #mobile-menu-btn, .no-print,
+  button, .copy-toast, [data-search], input, select,
+  .backdrop-blur-md { display: none !important; }
+  body { background: white !important; color: black !important; font-size: 12pt; line-height: 1.6; }
+  * { break-inside: avoid-page; }
+  h1, h2, h3 { break-after: avoid-page; color: #111 !important; }
   .bg-slate-950, .bg-slate-900, .bg-slate-800 { background: white !important; }
   .text-slate-100, .text-slate-200, .text-slate-300 { color: #1a1a1a !important; }
   .text-slate-400, .text-slate-500 { color: #555 !important; }
   .text-red-400, .text-red-500 { color: #c00 !important; }
   .border-slate-800, .border-slate-700 { border-color: #ccc !important; }
   a { color: #c00 !important; text-decoration: underline; }
-  a[href]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #666; }
-  nav a[href]::after, footer a[href]::after { content: none; }
-  pre { white-space: pre-wrap !important; border: 1px solid #ccc !important; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #666; font-style: italic; }
+  a[href^="#"]::after, a[href^="/"]::after { content: none; }
+  pre { white-space: pre-wrap !important; border: 1px solid #ccc !important; background: #f5f5f5 !important; }
   .shadow-lg, .shadow-red-500\/20 { box-shadow: none !important; }
+  @page { margin: 2cm; }
 }
 
 /* Copy button toast */
