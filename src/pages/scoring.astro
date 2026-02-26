@@ -1,0 +1,197 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Scoring System — TroySkills">
+  <div class="max-w-4xl mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold mb-2">TroySkills Severity Scoring System</h1>
+    <p class="text-slate-400 mb-4 text-lg">TSSS v1.0 — A purpose-built scoring framework for AI agent skill vulnerabilities.</p>
+    <p class="text-slate-300 mb-10">Traditional scoring systems like CVSS were designed for software vulnerabilities. TSSS is designed specifically for the unique threat landscape of AI agent skills, where attacks can be semantic, persistent, and cross boundaries that don't exist in traditional software.</p>
+
+    <!-- Dimensions -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-6 text-red-400">Scoring Dimensions</h2>
+      <p class="text-slate-300 mb-6">Each pattern is scored across 5 dimensions on a scale of 1–4:</p>
+
+      <div class="space-y-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+          <h3 class="font-bold text-lg mb-2">🔑 Access Required (AR)</h3>
+          <p class="text-slate-400 text-sm mb-3">What level of access does the attacker need to execute this attack?</p>
+          <div class="grid grid-cols-4 gap-2 text-xs">
+            <div class="bg-red-500/10 text-red-400 p-2 rounded text-center"><strong>4 — None</strong><br/>No special access; works via public skill registry</div>
+            <div class="bg-orange-500/10 text-orange-400 p-2 rounded text-center"><strong>3 — Low</strong><br/>Requires skill to be installed by user</div>
+            <div class="bg-yellow-500/10 text-yellow-400 p-2 rounded text-center"><strong>2 — Medium</strong><br/>Requires specific permissions or config</div>
+            <div class="bg-green-500/10 text-green-400 p-2 rounded text-center"><strong>1 — High</strong><br/>Requires admin/root or physical access</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+          <h3 class="font-bold text-lg mb-2">💥 Impact Scope (IS)</h3>
+          <p class="text-slate-400 text-sm mb-3">How broadly does the attack affect the system?</p>
+          <div class="grid grid-cols-4 gap-2 text-xs">
+            <div class="bg-red-500/10 text-red-400 p-2 rounded text-center"><strong>4 — Total</strong><br/>Full agent/host compromise, affects other agents</div>
+            <div class="bg-orange-500/10 text-orange-400 p-2 rounded text-center"><strong>3 — High</strong><br/>Agent-wide impact, data loss, credential theft</div>
+            <div class="bg-yellow-500/10 text-yellow-400 p-2 rounded text-center"><strong>2 — Moderate</strong><br/>Skill-scoped impact, limited data exposure</div>
+            <div class="bg-green-500/10 text-green-400 p-2 rounded text-center"><strong>1 — Low</strong><br/>Minimal impact, single function affected</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+          <h3 class="font-bold text-lg mb-2">👁️ Detectability (DT)</h3>
+          <p class="text-slate-400 text-sm mb-3">How difficult is it to detect the attack in progress or after the fact?</p>
+          <div class="grid grid-cols-4 gap-2 text-xs">
+            <div class="bg-red-500/10 text-red-400 p-2 rounded text-center"><strong>4 — Invisible</strong><br/>No logs, no artifacts, no behavioral change</div>
+            <div class="bg-orange-500/10 text-orange-400 p-2 rounded text-center"><strong>3 — Hard</strong><br/>Requires specialized tools or deep analysis</div>
+            <div class="bg-yellow-500/10 text-yellow-400 p-2 rounded text-center"><strong>2 — Moderate</strong><br/>Visible in logs or with basic monitoring</div>
+            <div class="bg-green-500/10 text-green-400 p-2 rounded text-center"><strong>1 — Obvious</strong><br/>Immediately apparent to user or basic checks</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+          <h3 class="font-bold text-lg mb-2">🔄 Persistence (PE)</h3>
+          <p class="text-slate-400 text-sm mb-3">Does the attack survive beyond the initial execution?</p>
+          <div class="grid grid-cols-4 gap-2 text-xs">
+            <div class="bg-red-500/10 text-red-400 p-2 rounded text-center"><strong>4 — Self-healing</strong><br/>Survives removal attempts, re-infects automatically</div>
+            <div class="bg-orange-500/10 text-orange-400 p-2 rounded text-center"><strong>3 — Persistent</strong><br/>Survives agent restarts and session resets</div>
+            <div class="bg-yellow-500/10 text-yellow-400 p-2 rounded text-center"><strong>2 — Session</strong><br/>Active during skill's session, cleared on restart</div>
+            <div class="bg-green-500/10 text-green-400 p-2 rounded text-center"><strong>1 — One-shot</strong><br/>Single execution, no lasting effect</div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+          <h3 class="font-bold text-lg mb-2">↩️ Reversibility (RV)</h3>
+          <p class="text-slate-400 text-sm mb-3">How easily can the damage be undone?</p>
+          <div class="grid grid-cols-4 gap-2 text-xs">
+            <div class="bg-red-500/10 text-red-400 p-2 rounded text-center"><strong>4 — Irreversible</strong><br/>Data destroyed, credentials leaked to third parties</div>
+            <div class="bg-orange-500/10 text-orange-400 p-2 rounded text-center"><strong>3 — Difficult</strong><br/>Requires significant effort, partial recovery possible</div>
+            <div class="bg-yellow-500/10 text-yellow-400 p-2 rounded text-center"><strong>2 — Moderate</strong><br/>Recoverable with backups or credential rotation</div>
+            <div class="bg-green-500/10 text-green-400 p-2 rounded text-center"><strong>1 — Easy</strong><br/>Remove skill and effects are immediately reversed</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Score Calculation -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-4 text-red-400">Score Calculation</h2>
+      <div class="bg-slate-900 border border-slate-800 rounded-lg p-6">
+        <p class="text-slate-300 mb-4">The TSSS score is calculated as a weighted average of the 5 dimensions:</p>
+        <div class="bg-slate-950 p-4 rounded font-mono text-sm text-red-400 mb-4">
+          TSSS = (AR × 1.0 + IS × 1.5 + DT × 1.0 + PE × 1.0 + RV × 0.5) / 5.0
+        </div>
+        <p class="text-slate-400 text-sm mb-4"><strong class="text-slate-200">Impact Scope</strong> has the highest weight (1.5×) because the breadth of damage is the most critical factor. <strong class="text-slate-200">Reversibility</strong> has the lowest weight (0.5×) because it's a post-incident concern.</p>
+        
+        <div class="grid grid-cols-4 gap-3 text-center text-sm mt-4">
+          <div class="bg-red-500/20 text-red-400 p-3 rounded">
+            <div class="font-bold">Critical</div>
+            <div class="text-xs">3.5 – 4.0</div>
+          </div>
+          <div class="bg-orange-500/20 text-orange-400 p-3 rounded">
+            <div class="font-bold">High</div>
+            <div class="text-xs">2.5 – 3.4</div>
+          </div>
+          <div class="bg-yellow-500/20 text-yellow-400 p-3 rounded">
+            <div class="font-bold">Medium</div>
+            <div class="text-xs">1.5 – 2.4</div>
+          </div>
+          <div class="bg-green-500/20 text-green-400 p-3 rounded">
+            <div class="font-bold">Low</div>
+            <div class="text-xs">1.0 – 1.4</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scored Examples -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-6 text-red-400">Scored Examples</h2>
+      
+      <div class="space-y-4">
+        <!-- Example 1 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-sm font-mono text-red-400 bg-red-500/10 px-2 py-1 rounded">TS-2026-0022</span>
+            <a href="/skill/TS-2026-0022" class="font-semibold hover:text-red-400 transition-colors">Memory Worm via Self-Replicating Context Injection</a>
+            <span class="ml-auto bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs font-bold">TSSS: 3.7 — Critical</span>
+          </div>
+          <div class="grid grid-cols-5 gap-2 text-xs text-center">
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">AR</div><div class="text-red-400 font-bold">3</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">IS</div><div class="text-red-400 font-bold">4</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">DT</div><div class="text-red-400 font-bold">3</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">PE</div><div class="text-red-400 font-bold">4</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">RV</div><div class="text-red-400 font-bold">3</div></div>
+          </div>
+          <p class="text-slate-500 text-xs mt-2">= (3×1.0 + 4×1.5 + 3×1.0 + 4×1.0 + 3×0.5) / 5.0 = 18.5/5.0 = 3.7</p>
+        </div>
+
+        <!-- Example 2 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-sm font-mono text-red-400 bg-red-500/10 px-2 py-1 rounded">TS-2026-0039</span>
+            <a href="/skill/TS-2026-0039" class="font-semibold hover:text-red-400 transition-colors">Multi-Agent Lateral Movement via Shared Channels</a>
+            <span class="ml-auto bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs font-bold">TSSS: 3.5 — Critical</span>
+          </div>
+          <div class="grid grid-cols-5 gap-2 text-xs text-center">
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">AR</div><div class="text-red-400 font-bold">3</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">IS</div><div class="text-red-400 font-bold">4</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">DT</div><div class="text-red-400 font-bold">3</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">PE</div><div class="text-red-400 font-bold">3</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">RV</div><div class="text-red-400 font-bold">3</div></div>
+          </div>
+          <p class="text-slate-500 text-xs mt-2">= (3×1.0 + 4×1.5 + 3×1.0 + 3×1.0 + 3×0.5) / 5.0 = 17.5/5.0 = 3.5</p>
+        </div>
+
+        <!-- Example 3 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-sm font-mono text-red-400 bg-red-500/10 px-2 py-1 rounded">TS-2026-0024</span>
+            <a href="/skill/TS-2026-0024" class="font-semibold hover:text-red-400 transition-colors">Exfiltration via DNS Tunneling in Exec Commands</a>
+            <span class="ml-auto bg-orange-500/20 text-orange-400 px-2 py-1 rounded text-xs font-bold">TSSS: 3.1 — High</span>
+          </div>
+          <div class="grid grid-cols-5 gap-2 text-xs text-center">
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">AR</div><div class="text-orange-400 font-bold">2</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">IS</div><div class="text-orange-400 font-bold">3</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">DT</div><div class="text-orange-400 font-bold">4</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">PE</div><div class="text-orange-400 font-bold">2</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">RV</div><div class="text-orange-400 font-bold">4</div></div>
+          </div>
+          <p class="text-slate-500 text-xs mt-2">= (2×1.0 + 3×1.5 + 4×1.0 + 2×1.0 + 4×0.5) / 5.0 = 14.5/5.0 = 2.9</p>
+        </div>
+
+        <!-- Example 4 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-sm font-mono text-red-400 bg-red-500/10 px-2 py-1 rounded">TS-2026-0025</span>
+            <a href="/skill/TS-2026-0025" class="font-semibold hover:text-red-400 transition-colors">Social Engineering via Fake Error Messages</a>
+            <span class="ml-auto bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs font-bold">TSSS: 2.3 — Medium</span>
+          </div>
+          <div class="grid grid-cols-5 gap-2 text-xs text-center">
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">AR</div><div class="text-yellow-400 font-bold">3</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">IS</div><div class="text-yellow-400 font-bold">2</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">DT</div><div class="text-yellow-400 font-bold">2</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">PE</div><div class="text-yellow-400 font-bold">1</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">RV</div><div class="text-yellow-400 font-bold">2</div></div>
+          </div>
+          <p class="text-slate-500 text-xs mt-2">= (3×1.0 + 2×1.5 + 2×1.0 + 1×1.0 + 2×0.5) / 5.0 = 10.0/5.0 = 2.0</p>
+        </div>
+
+        <!-- Example 5 -->
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-5">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-sm font-mono text-red-400 bg-red-500/10 px-2 py-1 rounded">TS-2026-0035</span>
+            <a href="/skill/TS-2026-0035" class="font-semibold hover:text-red-400 transition-colors">Agent Denial of Service via Context Window Flooding</a>
+            <span class="ml-auto bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs font-bold">TSSS: 2.1 — Medium</span>
+          </div>
+          <div class="grid grid-cols-5 gap-2 text-xs text-center">
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">AR</div><div class="text-yellow-400 font-bold">3</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">IS</div><div class="text-yellow-400 font-bold">2</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">DT</div><div class="text-yellow-400 font-bold">1</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">PE</div><div class="text-yellow-400 font-bold">2</div></div>
+            <div class="bg-slate-800 p-2 rounded"><div class="text-slate-400">RV</div><div class="text-yellow-400 font-bold">1</div></div>
+          </div>
+          <p class="text-slate-500 text-xs mt-2">= (3×1.0 + 2×1.5 + 1×1.0 + 2×1.0 + 1×0.5) / 5.0 = 9.5/5.0 = 1.9</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>
