@@ -1,0 +1,264 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const skills = await getCollection('skills');
+const totalPatterns = skills.length;
+const criticalCount = skills.filter(s => s.data.severity === 'Critical').length;
+---
+
+<Layout title="Quick Reference Card — TroySkills">
+  <style>
+    @media print {
+      nav, footer, .no-print { display: none !important; }
+      body { background: white !important; color: black !important; font-size: 9pt !important; }
+      .print-card { break-inside: avoid; border: 1px solid #ccc !important; background: white !important; }
+      .print-page { max-width: 100% !important; padding: 0.5cm !important; }
+      h1 { font-size: 16pt !important; }
+      h2 { font-size: 11pt !important; }
+      h3 { font-size: 9pt !important; }
+      .severity-badge { padding: 1px 6px !important; font-size: 7pt !important; }
+    }
+  </style>
+
+  <div class="print-page max-w-5xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center mb-6 no-print">
+      <h1 class="text-3xl font-bold text-white mb-2">🛡️ TroySkills Quick Reference Card</h1>
+      <p class="text-slate-400 mb-4">AI Agent Security — {totalPatterns} Patterns | {criticalCount} Critical | Print this page for a desk reference</p>
+      <button onclick="window.print()" class="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors">
+        🖨️ Print / Save as PDF
+      </button>
+    </div>
+
+    <!-- Print Header -->
+    <div class="hidden print:block text-center mb-4">
+      <h1 class="text-xl font-bold">🛡️ TroySkills — AI Agent Security Quick Reference</h1>
+      <p class="text-sm">{totalPatterns} Attack Patterns | {criticalCount} Critical | troyskills.ai | v1.0.0 — Feb 2026</p>
+    </div>
+
+    <!-- 7 Categories Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+      
+      <!-- P1: Prompt Injection -->
+      <div class="print-card bg-slate-900 border border-slate-700 rounded-lg p-4">
+        <h2 class="text-lg font-bold text-red-400 mb-1">💉 P1 — Prompt Injection</h2>
+        <p class="text-slate-400 text-sm mb-3">Manipulating agent behavior by injecting malicious instructions into prompts, tools, or context</p>
+        <div class="space-y-1.5 mb-3">
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0001" class="hover:text-red-400">TS-0001</a> — System Prompt Override via Skill Instructions</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0021" class="hover:text-red-400">TS-0021</a> — Tool Schema Poisoning via Overloaded Parameters</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0044" class="hover:text-red-400">TS-0044</a> — Reasoning Chain Hijack via Step Injection</span>
+          </div>
+        </div>
+        <div class="text-xs text-emerald-400 bg-emerald-500/10 rounded px-2 py-1">
+          <strong>⚡ Mitigation:</strong> Sanitize all inputs before LLM context injection; use structured tool schemas; implement prompt firewalls
+        </div>
+      </div>
+
+      <!-- P2: Data Exfiltration -->
+      <div class="print-card bg-slate-900 border border-slate-700 rounded-lg p-4">
+        <h2 class="text-lg font-bold text-orange-400 mb-1">📤 P2 — Data Exfiltration</h2>
+        <p class="text-slate-400 text-sm mb-3">Stealing credentials, tokens, secrets, or user data through agent tool access and network capabilities</p>
+        <div class="space-y-1.5 mb-3">
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0002" class="hover:text-red-400">TS-0002</a> — Credential Harvesting via Tool Wrapper</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0017" class="hover:text-red-400">TS-0017</a> — Environment Variable Harvesting via Debug Skill</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0045" class="hover:text-red-400">TS-0045</a> — Cloud Credential Harvesting via Environment Enumeration</span>
+          </div>
+        </div>
+        <div class="text-xs text-emerald-400 bg-emerald-500/10 rounded px-2 py-1">
+          <strong>⚡ Mitigation:</strong> Environment isolation; network egress allowlists; credential vaulting; monitor outbound connections
+        </div>
+      </div>
+
+      <!-- P3: Privilege Escalation -->
+      <div class="print-card bg-slate-900 border border-slate-700 rounded-lg p-4">
+        <h2 class="text-lg font-bold text-yellow-400 mb-1">🔓 P3 — Privilege Escalation</h2>
+        <p class="text-slate-400 text-sm mb-3">Gaining unauthorized access to systems, files, or capabilities beyond the agent's intended permissions</p>
+        <div class="space-y-1.5 mb-3">
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0003" class="hover:text-red-400">TS-0003</a> — Privilege Escalation via Elevated Exec</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0031" class="hover:text-red-400">TS-0031</a> — Sandbox Escape via Symlink Traversal</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0055" class="hover:text-red-400">TS-0055</a> — Shadow Tool Registration via MCP Protocol Abuse</span>
+          </div>
+        </div>
+        <div class="text-xs text-emerald-400 bg-emerald-500/10 rounded px-2 py-1">
+          <strong>⚡ Mitigation:</strong> Principle of least privilege; sandbox all tool execution; resolve symlinks; require human approval for elevated ops
+        </div>
+      </div>
+
+      <!-- P4: Malicious Scripts -->
+      <div class="print-card bg-slate-900 border border-slate-700 rounded-lg p-4">
+        <h2 class="text-lg font-bold text-purple-400 mb-1">🐍 P4 — Malicious Scripts</h2>
+        <p class="text-slate-400 text-sm mb-3">Executing harmful code via skill scripts, reverse shells, ransomware, or destructive payloads</p>
+        <div class="space-y-1.5 mb-3">
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0004" class="hover:text-red-400">TS-0004</a> — Reverse Shell via Skill Script</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0011" class="hover:text-red-400">TS-0011</a> — Recursive Self-Replication via Skill Spawning</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0038" class="hover:text-red-400">TS-0038</a> — Ransomware via Skill-Triggered File Encryption</span>
+          </div>
+        </div>
+        <div class="text-xs text-emerald-400 bg-emerald-500/10 rounded px-2 py-1">
+          <strong>⚡ Mitigation:</strong> Code review all skill scripts; block outbound connections; disable shell access; use allowlisted commands only
+        </div>
+      </div>
+
+      <!-- P5: Config Tampering -->
+      <div class="print-card bg-slate-900 border border-slate-700 rounded-lg p-4">
+        <h2 class="text-lg font-bold text-cyan-400 mb-1">⚙️ P5 — Config Tampering</h2>
+        <p class="text-slate-400 text-sm mb-3">Modifying agent memory, configuration files, or persistent state to maintain control across sessions</p>
+        <div class="space-y-1.5 mb-3">
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0022" class="hover:text-red-400">TS-0022</a> — Memory Worm via Self-Replicating Context Injection</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0050" class="hover:text-red-400">TS-0050</a> — Agent Memory Poisoning via Persistent Context Injection</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0093" class="hover:text-red-400">TS-0093</a> — Firmware-Level Persistence via Agent System Access</span>
+          </div>
+        </div>
+        <div class="text-xs text-emerald-400 bg-emerald-500/10 rounded px-2 py-1">
+          <strong>⚡ Mitigation:</strong> Integrity checking on config/memory files; read-only memory stores; session isolation; diff-based change detection
+        </div>
+      </div>
+
+      <!-- P6: Social Engineering -->
+      <div class="print-card bg-slate-900 border border-slate-700 rounded-lg p-4">
+        <h2 class="text-lg font-bold text-pink-400 mb-1">🎭 P6 — Social Engineering</h2>
+        <p class="text-slate-400 text-sm mb-3">Using AI agents to automate phishing, impersonation, manipulation, and trust exploitation</p>
+        <div class="space-y-1.5 mb-3">
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0049" class="hover:text-red-400">TS-0049</a> — Automated Spear Phishing via Agent OSINT</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0080" class="hover:text-red-400">TS-0080</a> — Evasion via Model-Aware Adaptive Payload Generation</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0087" class="hover:text-red-400">TS-0087</a> — Training Data Poisoning via Agent-Submitted Feedback</span>
+          </div>
+        </div>
+        <div class="text-xs text-emerald-400 bg-emerald-500/10 rounded px-2 py-1">
+          <strong>⚡ Mitigation:</strong> Rate-limit agent communications; require human approval for external messages; monitor for reconnaissance patterns
+        </div>
+      </div>
+
+      <!-- P7: Supply Chain -->
+      <div class="print-card bg-slate-900 border border-slate-700 rounded-lg p-4">
+        <h2 class="text-lg font-bold text-emerald-400 mb-1">📦 P7 — Supply Chain</h2>
+        <p class="text-slate-400 text-sm mb-3">Compromising skill distribution, updates, dependencies, and package management infrastructure</p>
+        <div class="space-y-1.5 mb-3">
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0029" class="hover:text-red-400">TS-0029</a> — Shadow Skill Installation via Post-Install Hook</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0051" class="hover:text-red-400">TS-0051</a> — Agent-to-Agent Worm Propagation</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="severity-badge inline-block px-2 py-0.5 bg-red-500/20 text-red-400 text-xs rounded font-mono shrink-0">CRIT</span>
+            <span class="text-sm text-slate-300"><a href="/skill/TS-2026-0016" class="hover:text-red-400">TS-0016</a> — Dependency Confusion in Skill Package Resolution</span>
+          </div>
+        </div>
+        <div class="text-xs text-emerald-400 bg-emerald-500/10 rounded px-2 py-1">
+          <strong>⚡ Mitigation:</strong> Verify skill signatures; pin dependencies; audit install hooks; use trusted registries with review gates
+        </div>
+      </div>
+    </div>
+
+    <!-- Emergency Response -->
+    <div class="print-card bg-slate-900 border border-red-500/30 rounded-lg p-5 mb-6">
+      <h2 class="text-xl font-bold text-red-400 mb-3">🚨 Emergency Response Checklist</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <h3 class="text-sm font-bold text-white mb-2">Immediate Actions (0-15 min)</h3>
+          <ol class="text-sm text-slate-300 space-y-1 list-decimal list-inside">
+            <li>Kill all running agent processes and sub-agents</li>
+            <li>Revoke exposed API keys and tokens immediately</li>
+            <li>Disconnect compromised MCP servers</li>
+            <li>Isolate affected systems from the network</li>
+            <li>Preserve logs before rotation (<code class="text-xs bg-slate-800 px-1 rounded">~/.openclaw/logs/</code>)</li>
+          </ol>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-white mb-2">Investigation (15-60 min)</h3>
+          <ol class="text-sm text-slate-300 space-y-1 list-decimal list-inside">
+            <li>Review agent conversation history for injection points</li>
+            <li>Check <code class="text-xs bg-slate-800 px-1 rounded">MEMORY.md</code> and config files for tampering</li>
+            <li>Audit installed skills and MCP server configs</li>
+            <li>Scan for unauthorized outbound connections in logs</li>
+            <li>Search for new/modified files in workspace directories</li>
+          </ol>
+        </div>
+      </div>
+      <div class="mt-4 pt-3 border-t border-slate-700">
+        <h3 class="text-sm font-bold text-white mb-2">Recovery</h3>
+        <div class="text-sm text-slate-300 grid grid-cols-1 md:grid-cols-3 gap-2">
+          <div>✅ Rotate all credentials</div>
+          <div>✅ Reinstall skills from trusted sources</div>
+          <div>✅ Reset agent memory/context files</div>
+          <div>✅ Review and harden MCP server configs</div>
+          <div>✅ Enable enhanced logging/monitoring</div>
+          <div>✅ Post-incident review with team</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Resources -->
+    <div class="print-card bg-slate-900 border border-slate-700 rounded-lg p-4 mb-6">
+      <h2 class="text-lg font-bold text-white mb-3">📚 Key Resources</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+        <a href="/database" class="text-red-400 hover:text-red-300">📋 Full Database</a>
+        <a href="/incidents" class="text-red-400 hover:text-red-300">🔥 Real Incidents</a>
+        <a href="/checklist" class="text-red-400 hover:text-red-300">✅ Security Checklist</a>
+        <a href="/threat-model" class="text-red-400 hover:text-red-300">🎯 Threat Model</a>
+        <a href="/mitre-mapping" class="text-red-400 hover:text-red-300">🗺️ MITRE Mapping</a>
+        <a href="/defense" class="text-red-400 hover:text-red-300">🛡️ Defense Guide</a>
+        <a href="/api" class="text-red-400 hover:text-red-300">🔌 API Access</a>
+        <a href="/compliance" class="text-red-400 hover:text-red-300">📜 Compliance</a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center text-xs text-slate-500">
+      <p>TroySkills v1.0.0 — {totalPatterns} patterns | troyskills.ai | Last Updated: Feb 26, 2026</p>
+      <p class="mt-1">Report new patterns: <a href="/contribute" class="text-red-400">troyskills.ai/contribute</a> | Licensed under CC BY 4.0</p>
+    </div>
+  </div>
+</Layout>
