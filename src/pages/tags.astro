@@ -1,0 +1,87 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { getCollection } from 'astro:content';
+
+const skills = await getCollection('skills');
+
+// Build tag → patterns map
+const tagMap = new Map<string, { id: string; title: string; severity: string; category: string }[]>();
+skills.forEach(skill => {
+  const tags = skill.data.tags || [];
+  tags.forEach((tag: string) => {
+    if (!tagMap.has(tag)) tagMap.set(tag, []);
+    tagMap.get(tag)!.push({
+      id: skill.data.id,
+      title: skill.data.title,
+      severity: skill.data.severity,
+      category: skill.data.category,
+    });
+  });
+});
+
+// Sort tags by count descending
+const tagEntries = Array.from(tagMap.entries()).sort((a, b) => b[1].length - a[1].length);
+const maxCount = tagEntries[0]?.[1].length || 1;
+const minCount = tagEntries[tagEntries.length - 1]?.[1].length || 1;
+
+function getTagSize(count: number): string {
+  if (maxCount === minCount) return 'text-base';
+  const ratio = (count - minCount) / (maxCount - minCount);
+  if (ratio > 0.8) return 'text-2xl font-bold';
+  if (ratio > 0.6) return 'text-xl font-semibold';
+  if (ratio > 0.4) return 'text-lg font-medium';
+  if (ratio > 0.2) return 'text-base';
+  return 'text-sm';
+}
+---
+
+<Layout title="Tags — TroySkills" description="Browse all attack pattern tags. Visual tag cloud for AI agent security patterns.">
+  <section class="max-w-6xl mx-auto px-4 py-12">
+    <Breadcrumb items={[{ label: "Tags" }]} />
+    <h1 class="text-3xl font-bold mb-2">🏷️ Pattern Tags</h1>
+    <p class="text-slate-400 mb-8">{tagEntries.length} unique tags across {skills.length} patterns.</p>
+
+    <!-- Tag Cloud -->
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-8 mb-12">
+      <h2 class="text-xs text-slate-500 uppercase tracking-wider mb-4">Tag Cloud</h2>
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        {tagEntries.map(([tag, patterns]) => (
+          <a href={`#tag-${tag}`}
+             class={`${getTagSize(patterns.length)} text-slate-300 hover:text-red-400 transition-colors cursor-pointer`}
+             onclick={`document.getElementById('tag-${tag}')?.scrollIntoView({behavior:'smooth',block:'start'}); return false;`}>
+            {tag}
+            <sup class="text-xs text-slate-500 ml-0.5">{patterns.length}</sup>
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Tag Details -->
+    <div class="space-y-6">
+      {tagEntries.map(([tag, patterns]) => (
+        <div id={`tag-${tag}`} class="scroll-mt-20">
+          <div class="flex items-center gap-3 mb-3">
+            <h2 class="text-lg font-semibold text-slate-200">
+              <span class="text-red-400">#</span>{tag}
+            </h2>
+            <span class="text-xs bg-slate-800 text-slate-400 px-2 py-1 rounded-full">{patterns.length} pattern{patterns.length !== 1 ? 's' : ''}</span>
+          </div>
+          <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {patterns.sort((a, b) => a.id.localeCompare(b.id)).map(p => (
+              <a href={`/skill/${p.id}`} class="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-lg px-4 py-3 hover:border-red-500/50 transition-colors">
+                <span class="text-xs font-mono text-red-400">{p.id}</span>
+                <span class="text-sm text-slate-300 truncate">{p.title}</span>
+                <span class={`ml-auto text-xs px-1.5 py-0.5 rounded-full shrink-0 ${
+                  p.severity === 'Critical' ? 'bg-red-500/20 text-red-400' :
+                  p.severity === 'High' ? 'bg-orange-500/20 text-orange-400' :
+                  'bg-yellow-500/20 text-yellow-400'
+                }`}>{p.severity}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</Layout>

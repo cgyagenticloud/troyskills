@@ -17,9 +17,10 @@ const categories = [
 ];
 
 const severities = ['Critical', 'High', 'Medium'];
+const sevOrder: Record<string, number> = { Critical: 0, High: 1, Medium: 2 };
 ---
 
-<Layout title="Database — TroySkills" description="Search and browse 100+ documented AI agent malicious skill patterns. Filter by severity, category, and tags.">
+<Layout title="Database — TroySkills" description="Search and browse 140+ documented AI agent malicious skill patterns. Filter by severity, category, and tags.">
   <section class="max-w-6xl mx-auto px-4 py-12">
     <Breadcrumb items={[{ label: "Database" }]} />
     <h1 class="text-3xl font-bold mb-2">Attack Pattern Database</h1>
@@ -49,7 +50,7 @@ const severities = ['Critical', 'High', 'Medium'];
     </div>
 
     <!-- Severity Filters -->
-    <div class="mb-8">
+    <div class="mb-6">
       <div class="text-xs text-slate-500 uppercase tracking-wider mb-2">Severity</div>
       <div class="flex flex-wrap gap-2">
         <button class="filter-sev active text-xs px-3 py-1.5 rounded-full border border-slate-700 bg-slate-800 text-slate-300 hover:border-red-500/50 transition-colors" data-sev="all">All</button>
@@ -59,16 +60,38 @@ const severities = ['Critical', 'High', 'Medium'];
       </div>
     </div>
 
-    <!-- Results count -->
-    <div class="text-sm text-slate-500 mb-4" id="results-count">Showing {sorted.length} patterns</div>
+    <!-- View Toggle + Sort -->
+    <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+      <div class="text-sm text-slate-500" id="results-count">Showing {sorted.length} patterns</div>
+      <div class="flex items-center gap-4">
+        <!-- Sort -->
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-slate-500">Sort:</span>
+          <select id="sort-select" class="text-xs bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-300 focus:border-red-500 focus:outline-none">
+            <option value="id">ID</option>
+            <option value="severity">Severity</option>
+            <option value="category">Category</option>
+            <option value="date">Date</option>
+          </select>
+        </div>
+        <!-- View Toggle -->
+        <div class="flex items-center gap-1 bg-slate-900 border border-slate-700 rounded-lg p-0.5">
+          <button id="view-list" class="view-btn active text-xs px-3 py-1.5 rounded-md bg-slate-700 text-slate-200 transition-colors" title="List view">☰ List</button>
+          <button id="view-table" class="view-btn text-xs px-3 py-1.5 rounded-md text-slate-400 hover:text-slate-200 transition-colors" title="Table view">⊞ Table</button>
+        </div>
+      </div>
+    </div>
 
-    <!-- Table -->
+    <!-- List View -->
     <div class="space-y-3" id="skill-list">
       {sorted.map(skill => (
         <a href={`/skill/${skill.data.id}`} class="skill-item block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors"
            data-search={`${skill.data.id} ${skill.data.title} ${skill.data.category} ${skill.data.description} ${(skill.data.tags || []).join(' ')}`.toLowerCase()}
            data-cat={skill.data.category}
-           data-sev={skill.data.severity}>
+           data-sev={skill.data.severity}
+           data-id={skill.data.id}
+           data-date={skill.data.date}
+           data-sev-order={sevOrder[skill.data.severity] ?? 9}>
           <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
               <span class="text-xs font-mono text-red-400 mr-3">{skill.data.id}</span>
@@ -88,21 +111,78 @@ const severities = ['Critical', 'High', 'Medium'];
         </a>
       ))}
     </div>
+
+    <!-- Table View (hidden by default) -->
+    <div class="hidden" id="skill-table">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-slate-700 text-left">
+              <th class="py-3 px-3 text-xs text-slate-400 font-medium uppercase tracking-wider">ID</th>
+              <th class="py-3 px-3 text-xs text-slate-400 font-medium uppercase tracking-wider">Title</th>
+              <th class="py-3 px-3 text-xs text-slate-400 font-medium uppercase tracking-wider">Category</th>
+              <th class="py-3 px-3 text-xs text-slate-400 font-medium uppercase tracking-wider">Severity</th>
+              <th class="py-3 px-3 text-xs text-slate-400 font-medium uppercase tracking-wider">Date</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            {sorted.map(skill => (
+              <tr class="table-row-item border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors cursor-pointer"
+                  data-href={`/skill/${skill.data.id}`}
+                  data-search={`${skill.data.id} ${skill.data.title} ${skill.data.category} ${skill.data.description} ${(skill.data.tags || []).join(' ')}`.toLowerCase()}
+                  data-cat={skill.data.category}
+                  data-sev={skill.data.severity}
+                  data-id={skill.data.id}
+                  data-date={skill.data.date}
+                  data-sev-order={sevOrder[skill.data.severity] ?? 9}>
+                <td class="py-2.5 px-3 font-mono text-red-400 text-xs">{skill.data.id}</td>
+                <td class="py-2.5 px-3 text-slate-200">{skill.data.title}</td>
+                <td class="py-2.5 px-3"><span class="text-xs bg-slate-800 px-2 py-1 rounded-full">{skill.data.category}</span></td>
+                <td class="py-2.5 px-3">
+                  <span class={`text-xs px-2 py-1 rounded-full ${
+                    skill.data.severity === 'Critical' ? 'bg-red-500/20 text-red-400' :
+                    skill.data.severity === 'High' ? 'bg-orange-500/20 text-orange-400' :
+                    'bg-yellow-500/20 text-yellow-400'
+                  }`}>{skill.data.severity}</span>
+                </td>
+                <td class="py-2.5 px-3 text-xs text-slate-500">{skill.data.date}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </section>
 
   <script>
     const search = document.getElementById('search') as HTMLInputElement;
-    const items = document.querySelectorAll('.skill-item');
+    const listItems = document.querySelectorAll('.skill-item');
+    const tableRows = document.querySelectorAll('.table-row-item');
     const catBtns = document.querySelectorAll('.filter-cat');
     const sevBtns = document.querySelectorAll('.filter-sev');
     const countEl = document.getElementById('results-count');
+    const listView = document.getElementById('skill-list')!;
+    const tableView = document.getElementById('skill-table')!;
+    const viewListBtn = document.getElementById('view-list')!;
+    const viewTableBtn = document.getElementById('view-table')!;
+    const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
 
     let activeCat = 'all';
     let activeSev = 'all';
+    let currentView = 'list';
+
+    // Table row click navigation
+    tableRows.forEach(row => {
+      row.addEventListener('click', () => {
+        const href = (row as HTMLElement).dataset.href;
+        if (href) window.location.href = href;
+      });
+    });
 
     function applyFilters() {
       const q = search?.value.toLowerCase().trim() || '';
       let visible = 0;
+      const items = currentView === 'list' ? listItems : tableRows;
       items.forEach(item => {
         const el = item as HTMLElement;
         const matchSearch = !q || (el.dataset.search || '').includes(q);
@@ -111,6 +191,15 @@ const severities = ['Critical', 'High', 'Medium'];
         const show = matchSearch && matchCat && matchSev;
         el.style.display = show ? '' : 'none';
         if (show) visible++;
+      });
+      // Also hide/show in the other view
+      const otherItems = currentView === 'list' ? tableRows : listItems;
+      otherItems.forEach(item => {
+        const el = item as HTMLElement;
+        const matchSearch = !q || (el.dataset.search || '').includes(q);
+        const matchCat = activeCat === 'all' || el.dataset.cat === activeCat;
+        const matchSev = activeSev === 'all' || el.dataset.sev === activeSev;
+        el.style.display = (matchSearch && matchCat && matchSev) ? '' : 'none';
       });
       if (countEl) countEl.textContent = `Showing ${visible} pattern${visible !== 1 ? 's' : ''}`;
     }
@@ -141,5 +230,53 @@ const severities = ['Critical', 'High', 'Medium'];
     });
 
     search?.addEventListener('input', applyFilters);
+
+    // View toggle
+    function setView(view: string) {
+      currentView = view;
+      if (view === 'list') {
+        listView.classList.remove('hidden');
+        tableView.classList.add('hidden');
+        viewListBtn.classList.add('bg-slate-700', 'text-slate-200');
+        viewListBtn.classList.remove('text-slate-400');
+        viewTableBtn.classList.remove('bg-slate-700', 'text-slate-200');
+        viewTableBtn.classList.add('text-slate-400');
+      } else {
+        listView.classList.add('hidden');
+        tableView.classList.remove('hidden');
+        viewTableBtn.classList.add('bg-slate-700', 'text-slate-200');
+        viewTableBtn.classList.remove('text-slate-400');
+        viewListBtn.classList.remove('bg-slate-700', 'text-slate-200');
+        viewListBtn.classList.add('text-slate-400');
+      }
+      applyFilters();
+    }
+
+    viewListBtn.addEventListener('click', () => setView('list'));
+    viewTableBtn.addEventListener('click', () => setView('table'));
+
+    // Sort
+    function sortItems(by: string) {
+      const sortFn = (a: HTMLElement, b: HTMLElement) => {
+        if (by === 'id') return (a.dataset.id || '').localeCompare(b.dataset.id || '');
+        if (by === 'severity') return Number(a.dataset.sevOrder || 9) - Number(b.dataset.sevOrder || 9);
+        if (by === 'category') return (a.dataset.cat || '').localeCompare(b.dataset.cat || '');
+        if (by === 'date') return (b.dataset.date || '').localeCompare(a.dataset.date || '');
+        return 0;
+      };
+
+      // Sort list view
+      const listArr = Array.from(listItems) as HTMLElement[];
+      listArr.sort(sortFn);
+      listArr.forEach(el => listView.appendChild(el));
+
+      // Sort table view
+      const tableBody = document.getElementById('table-body')!;
+      const rowArr = Array.from(tableRows) as HTMLElement[];
+      rowArr.sort(sortFn);
+      rowArr.forEach(el => tableBody.appendChild(el));
+    }
+
+    sortSelect.addEventListener('change', () => sortItems(sortSelect.value));
   </script>
 </Layout>
