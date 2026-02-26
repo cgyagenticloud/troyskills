@@ -1,0 +1,219 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const preInstall = [
+  { text: 'Verify skill package signature and publisher identity', patterns: ['TS-2026-0017', 'TS-2026-0019'] },
+  { text: 'Review SKILL.md for hidden prompt injection (HTML comments, invisible unicode)', patterns: ['TS-2026-0001', 'TS-2026-0003'] },
+  { text: 'Check install/post-install hooks for shell commands', patterns: ['TS-2026-0037', 'TS-2026-0040'] },
+  { text: 'Audit requested permissions — reject over-privileged skills', patterns: ['TS-2026-0025', 'TS-2026-0029'] },
+  { text: 'Scan dependencies for known vulnerabilities (npm audit / pip audit)', patterns: ['TS-2026-0097', 'TS-2026-0100'] },
+  { text: 'Verify skill source URL matches official repository', patterns: ['TS-2026-0095', 'TS-2026-0096'] },
+  { text: 'Check skill download count and community reviews', patterns: ['TS-2026-0098'] },
+  { text: 'Run skill in sandbox/container before production deployment', patterns: ['TS-2026-0037', 'TS-2026-0041'] },
+  { text: 'Validate API endpoints the skill will contact', patterns: ['TS-2026-0013', 'TS-2026-0015'] },
+  { text: 'Document approved skills in an allowlist and enforce it', patterns: ['TS-2026-0019', 'TS-2026-0097'] },
+];
+
+const runtime = [
+  { text: 'Enable logging for all tool calls and external API requests', patterns: ['TS-2026-0049', 'TS-2026-0050'] },
+  { text: 'Monitor outbound network traffic for unexpected destinations', patterns: ['TS-2026-0013', 'TS-2026-0015'] },
+  { text: 'Set token/rate limits per skill to prevent resource abuse', patterns: ['TS-2026-0043', 'TS-2026-0044'] },
+  { text: 'Implement content filtering on agent outputs', patterns: ['TS-2026-0061', 'TS-2026-0063'] },
+  { text: 'Require human approval for sensitive operations (file write, payments)', patterns: ['TS-2026-0025', 'TS-2026-0029'] },
+  { text: 'Monitor for config file modifications at runtime', patterns: ['TS-2026-0049', 'TS-2026-0051'] },
+  { text: 'Check for prompt injection in user inputs before agent processing', patterns: ['TS-2026-0001', 'TS-2026-0005'] },
+  { text: 'Validate all tool-call parameters against expected schemas', patterns: ['TS-2026-0037', 'TS-2026-0040'] },
+  { text: 'Monitor agent memory/context window for suspicious growth', patterns: ['TS-2026-0007', 'TS-2026-0009'] },
+  { text: 'Alert on any skill attempting to modify other skills or agent config', patterns: ['TS-2026-0049', 'TS-2026-0053'] },
+];
+
+const incident = [
+  { text: 'Immediately revoke compromised skill\'s permissions and isolate agent', patterns: ['TS-2026-0025'] },
+  { text: 'Capture and preserve agent logs, memory state, and conversation history', patterns: ['TS-2026-0049'] },
+  { text: 'Check for data exfiltration — audit all outbound requests during incident window', patterns: ['TS-2026-0013', 'TS-2026-0015'] },
+  { text: 'Rotate all API keys, tokens, and credentials the agent had access to', patterns: ['TS-2026-0029', 'TS-2026-0031'] },
+  { text: 'Report the malicious skill to the marketplace and community', patterns: ['TS-2026-0097'] },
+];
+---
+
+<Layout title="AI Agent Security Checklist — TroySkills">
+  <main class="max-w-4xl mx-auto px-4 py-16">
+    <div class="mb-12">
+      <div class="inline-block px-3 py-1 bg-green-500/10 text-green-400 text-sm font-medium rounded-full mb-4 border border-green-500/20">
+        ✅ Quick Start Guide
+      </div>
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">
+        Security <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-500">Checklist</span>
+      </h1>
+      <p class="text-lg text-slate-400 max-w-2xl">
+        A practical, actionable checklist for AI agent operators. Check items off as you complete them — your progress is saved locally.
+      </p>
+      <div class="mt-4 flex gap-3">
+        <div id="progress-bar" class="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
+          <div id="progress-fill" class="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <span id="progress-text" class="text-sm text-slate-400 font-mono">0/25</span>
+      </div>
+    </div>
+
+    <!-- Pre-Installation -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-2 flex items-center gap-2">
+        <span class="text-3xl">📋</span> Pre-Installation Checks
+      </h2>
+      <p class="text-sm text-slate-400 mb-6">Before installing any skill or MCP server, verify these items.</p>
+      <div class="space-y-3">
+        {preInstall.map((item, i) => (
+          <label class="flex items-start gap-3 p-4 bg-slate-900/50 border border-slate-800 rounded-lg cursor-pointer hover:border-slate-700 transition-colors group" data-check={`pre-${i}`}>
+            <input type="checkbox" class="checklist-item mt-1 w-5 h-5 rounded border-slate-600 bg-slate-800 text-green-500 focus:ring-green-500/20 flex-shrink-0 cursor-pointer" data-id={`pre-${i}`} />
+            <div class="flex-1">
+              <span class="text-slate-200 group-hover:text-white transition-colors">{item.text}</span>
+              <div class="flex gap-1 mt-1.5">
+                {item.patterns.map(p => (
+                  <a href={`/skill/${p}`} class="text-xs px-1.5 py-0.5 bg-slate-800 text-red-400 rounded hover:bg-slate-700 transition-colors" onclick="event.stopPropagation()">
+                    {p}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </label>
+        ))}
+      </div>
+    </section>
+
+    <!-- Runtime Monitoring -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-2 flex items-center gap-2">
+        <span class="text-3xl">🔍</span> Runtime Monitoring
+      </h2>
+      <p class="text-sm text-slate-400 mb-6">Ongoing monitoring while agents are running in production.</p>
+      <div class="space-y-3">
+        {runtime.map((item, i) => (
+          <label class="flex items-start gap-3 p-4 bg-slate-900/50 border border-slate-800 rounded-lg cursor-pointer hover:border-slate-700 transition-colors group" data-check={`run-${i}`}>
+            <input type="checkbox" class="checklist-item mt-1 w-5 h-5 rounded border-slate-600 bg-slate-800 text-green-500 focus:ring-green-500/20 flex-shrink-0 cursor-pointer" data-id={`run-${i}`} />
+            <div class="flex-1">
+              <span class="text-slate-200 group-hover:text-white transition-colors">{item.text}</span>
+              <div class="flex gap-1 mt-1.5">
+                {item.patterns.map(p => (
+                  <a href={`/skill/${p}`} class="text-xs px-1.5 py-0.5 bg-slate-800 text-red-400 rounded hover:bg-slate-700 transition-colors" onclick="event.stopPropagation()">
+                    {p}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </label>
+        ))}
+      </div>
+    </section>
+
+    <!-- Incident Response -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold mb-2 flex items-center gap-2">
+        <span class="text-3xl">🚨</span> Incident Response
+      </h2>
+      <p class="text-sm text-slate-400 mb-6">When a malicious skill is detected or suspected.</p>
+      <div class="space-y-3">
+        {incident.map((item, i) => (
+          <label class="flex items-start gap-3 p-4 bg-slate-900/50 border border-slate-800 rounded-lg cursor-pointer hover:border-slate-700 transition-colors group" data-check={`inc-${i}`}>
+            <input type="checkbox" class="checklist-item mt-1 w-5 h-5 rounded border-slate-600 bg-slate-800 text-green-500 focus:ring-green-500/20 flex-shrink-0 cursor-pointer" data-id={`inc-${i}`} />
+            <div class="flex-1">
+              <span class="text-slate-200 group-hover:text-white transition-colors">{item.text}</span>
+              <div class="flex gap-1 mt-1.5">
+                {item.patterns.map(p => (
+                  <a href={`/skill/${p}`} class="text-xs px-1.5 py-0.5 bg-slate-800 text-red-400 rounded hover:bg-slate-700 transition-colors" onclick="event.stopPropagation()">
+                    {p}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </label>
+        ))}
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <div class="flex justify-between items-center p-4 bg-slate-900/50 border border-slate-800 rounded-xl">
+      <span class="text-sm text-slate-400">Progress saved in your browser.</span>
+      <button id="reset-btn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm rounded-lg transition-colors border border-slate-700">
+        Reset All ↺
+      </button>
+    </div>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'troyskills-checklist';
+    
+    function loadState(): Record<string, boolean> {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      } catch { return {}; }
+    }
+    
+    function saveState(state: Record<string, boolean>) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+    
+    function updateProgress() {
+      const boxes = document.querySelectorAll('.checklist-item') as NodeListOf<HTMLInputElement>;
+      const checked = Array.from(boxes).filter(b => b.checked).length;
+      const total = boxes.length;
+      const pct = total ? Math.round((checked / total) * 100) : 0;
+      const fill = document.getElementById('progress-fill');
+      const text = document.getElementById('progress-text');
+      if (fill) fill.style.width = `${pct}%`;
+      if (text) text.textContent = `${checked}/${total}`;
+    }
+    
+    // Init
+    const state = loadState();
+    document.querySelectorAll('.checklist-item').forEach((box) => {
+      const input = box as HTMLInputElement;
+      const id = input.dataset.id!;
+      if (state[id]) input.checked = true;
+      
+      input.addEventListener('change', () => {
+        const s = loadState();
+        s[id] = input.checked;
+        saveState(s);
+        updateProgress();
+        // Visual feedback
+        const label = input.closest('label');
+        if (label) {
+          if (input.checked) {
+            label.classList.add('border-green-500/30', 'bg-green-500/5');
+            label.classList.remove('border-slate-800', 'bg-slate-900/50');
+          } else {
+            label.classList.remove('border-green-500/30', 'bg-green-500/5');
+            label.classList.add('border-slate-800', 'bg-slate-900/50');
+          }
+        }
+      });
+      
+      // Apply visual state on load
+      if (input.checked) {
+        const label = input.closest('label');
+        if (label) {
+          label.classList.add('border-green-500/30', 'bg-green-500/5');
+          label.classList.remove('border-slate-800', 'bg-slate-900/50');
+        }
+      }
+    });
+    
+    updateProgress();
+    
+    document.getElementById('reset-btn')?.addEventListener('click', () => {
+      if (confirm('Reset all checklist items?')) {
+        localStorage.removeItem(STORAGE_KEY);
+        document.querySelectorAll('.checklist-item').forEach((box) => {
+          (box as HTMLInputElement).checked = false;
+          const label = box.closest('label');
+          if (label) {
+            label.classList.remove('border-green-500/30', 'bg-green-500/5');
+            label.classList.add('border-slate-800', 'bg-slate-900/50');
+          }
+        });
+        updateProgress();
+      }
+    });
+  </script>
+</Layout>
