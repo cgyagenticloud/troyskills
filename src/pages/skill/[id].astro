@@ -30,7 +30,20 @@ const categoryNames: Record<string, string> = {
 };
 ---
 
-<Layout title={`${skill.data.id}: ${skill.data.title} — TroySkills`}>
+<Layout title={`${skill.data.id}: ${skill.data.title} — TroySkills`} description={`${skill.data.id}: ${skill.data.title}. ${skill.data.severity} severity ${categoryNames[skill.data.category]} attack pattern. ${skill.data.description}`}>
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": `${skill.data.id}: ${skill.data.title}`,
+    "description": skill.data.description,
+    "datePublished": skill.data.date,
+    "author": { "@type": "Organization", "name": "TroySkills", "url": "https://troyskills.ai" },
+    "publisher": { "@type": "Organization", "name": "TroySkills", "url": "https://troyskills.ai" },
+    "mainEntityOfPage": `https://troyskills.ai/skill/${skill.data.id}`,
+    "keywords": skill.data.tags?.join(", "),
+    "articleSection": `${skill.data.category}: ${categoryNames[skill.data.category]}`
+  })} />
   <article class="max-w-4xl mx-auto px-4 py-12">
     <Breadcrumb items={[
       { label: 'Database', href: '/database' },

@@ -1,0 +1,134 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+---
+
+<Layout title="Resources — TroySkills" description="Curated resources for AI agent security: databases, academic papers, tools, and articles.">
+  <section class="max-w-4xl mx-auto px-4 py-12">
+    <Breadcrumb items={[{ label: "Resources" }]} />
+    <h1 class="text-3xl font-bold mb-3">Resources</h1>
+    <p class="text-slate-400 mb-12">Curated collection of databases, research papers, tools, and articles for AI agent security.</p>
+
+    <!-- Security Databases & Frameworks -->
+    <div class="mb-12">
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2">🗄️ Security Databases & Frameworks</h2>
+      <div class="space-y-4">
+        <a href="https://cve.mitre.org" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">CVE — Common Vulnerabilities and Exposures</h3>
+          <p class="text-sm text-slate-400 mt-1">The gold standard for identifying and cataloging software security vulnerabilities. TroySkills follows a similar taxonomy approach for AI agent threats.</p>
+        </a>
+        <a href="https://nvd.nist.gov" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">NVD — National Vulnerability Database</h3>
+          <p class="text-sm text-slate-400 mt-1">NIST's comprehensive vulnerability database with severity scoring (CVSS). Our severity scoring system is inspired by their methodology.</p>
+        </a>
+        <a href="https://attack.mitre.org" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">MITRE ATT&CK Framework</h3>
+          <p class="text-sm text-slate-400 mt-1">Knowledge base of adversary tactics and techniques. Our category system maps loosely to ATT&CK's approach of classifying attack patterns by stage and method.</p>
+        </a>
+        <a href="https://owasp.org/www-project-top-ten/" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">OWASP Top 10</h3>
+          <p class="text-sm text-slate-400 mt-1">The standard awareness document for web application security. OWASP also maintains an LLM Top 10 specifically for large language model applications.</p>
+        </a>
+        <a href="https://owasp.org/www-project-top-10-for-large-language-model-applications/" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">OWASP Top 10 for LLM Applications</h3>
+          <p class="text-sm text-slate-400 mt-1">Specifically targets LLM security risks including prompt injection, insecure output handling, and supply chain vulnerabilities — closely aligned with TroySkills categories.</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- Academic Papers -->
+    <div class="mb-12">
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2">📄 Academic Papers</h2>
+      <div class="space-y-4">
+        <a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/5750f91d8fb9d5c02bd8ad2c3b44456b-Paper-Conference.pdf" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">Agent Security Bench (ASB)</h3>
+          <p class="text-sm text-slate-400 mt-1">Published at ICLR 2025. A comprehensive benchmark for evaluating AI agent security against prompt injection and other attacks. Covers 10 agent scenarios and multiple attack types.</p>
+          <span class="text-xs text-slate-500 mt-2 inline-block">ICLR 2025 Conference Paper</span>
+        </a>
+        <a href="https://www.sciencedirect.com/science/article/pii/S2405959525001997" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">From Prompt Injections to Protocol Exploits: Threats in LLM-Powered AI Agent Workflows</h3>
+          <p class="text-sm text-slate-400 mt-1">Comprehensive analysis of security threats in autonomous AI agents with structured function-calling interfaces. Covers the full attack surface from prompt injection to protocol-level exploits.</p>
+          <span class="text-xs text-slate-500 mt-2 inline-block">ScienceDirect, 2025</span>
+        </a>
+        <a href="https://arxiv.org/html/2510.05244v1" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">Indirect Prompt Injections: Are Firewalls All You Need, or Stronger Benchmarks?</h3>
+          <p class="text-sm text-slate-400 mt-1">Evaluates defenses against indirect prompt injection attacks where malicious content is embedded in external data sources processed by AI agents.</p>
+          <span class="text-xs text-slate-500 mt-2 inline-block">arXiv, October 2025</span>
+        </a>
+        <a href="https://arxiv.org/html/2509.22040v1" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">"Your AI, My Shell": Demystifying Prompt Injection Attacks on Agentic AI Coding Editors</h3>
+          <p class="text-sm text-slate-400 mt-1">Demonstrates how AI coding agents with filesystem and shell access can be compromised through prompt injection embedded in code repositories.</p>
+          <span class="text-xs text-slate-500 mt-2 inline-block">arXiv, September 2025</span>
+        </a>
+        <a href="https://arxiv.org/pdf/2504.18575" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">WASP: Benchmarking Web Agent Security Against Prompt Injection Attacks</h3>
+          <p class="text-sm text-slate-400 mt-1">Benchmark specifically targeting web-browsing AI agents, testing their resilience against prompt injection attacks embedded in web content.</p>
+          <span class="text-xs text-slate-500 mt-2 inline-block">arXiv, April 2025</span>
+        </a>
+        <a href="https://www.mdpi.com/2078-2489/17/1/54" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">Prompt Injection Attacks in LLMs and AI Agent Systems: A Comprehensive Review</h3>
+          <p class="text-sm text-slate-400 mt-1">Systematic review of vulnerabilities, attack vectors, and defense mechanisms for prompt injection across LLM and AI agent systems.</p>
+          <span class="text-xs text-slate-500 mt-2 inline-block">MDPI Information, January 2026</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Tools -->
+    <div class="mb-12">
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2">🔧 Tools for Agent Security Testing</h2>
+      <div class="space-y-4">
+        <a href="https://github.com/leondz/garak" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">garak — LLM Vulnerability Scanner</h3>
+          <p class="text-sm text-slate-400 mt-1">Open-source tool for probing LLMs for various vulnerabilities including prompt injection, data leakage, and harmful content generation.</p>
+        </a>
+        <a href="https://github.com/protectai/rebuff" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">Rebuff — Prompt Injection Detector</h3>
+          <p class="text-sm text-slate-400 mt-1">Self-hardening prompt injection detection framework. Uses multi-layered defense including heuristics, LLM analysis, and canary tokens.</p>
+        </a>
+        <a href="https://www.lakera.ai" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">Lakera Guard</h3>
+          <p class="text-sm text-slate-400 mt-1">AI security platform providing real-time protection against prompt injection, data leakage, and other LLM vulnerabilities. Offers a free tier for testing.</p>
+        </a>
+        <a href="https://github.com/Azure/PyRIT" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">PyRIT — Python Risk Identification Toolkit</h3>
+          <p class="text-sm text-slate-400 mt-1">Microsoft's open-source framework for identifying risks in generative AI systems through automated red teaming.</p>
+        </a>
+      </div>
+    </div>
+
+    <!-- Articles & Blog Posts -->
+    <div class="mb-12">
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2">📰 Articles & Blog Posts</h2>
+      <div class="space-y-4">
+        <a href="https://simonwillison.net/2025/Nov/2/new-prompt-injection-papers/" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">New Prompt Injection Papers: Agents Rule of Two and The Attacker Moves Second</h3>
+          <p class="text-sm text-slate-400 mt-1">Simon Willison's analysis of two key research papers proposing architectural solutions to prompt injection in AI agents.</p>
+          <span class="text-xs text-slate-500 mt-2 inline-block">Simon Willison, November 2025</span>
+        </a>
+        <a href="https://www.lakera.ai/blog/indirect-prompt-injection" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">Indirect Prompt Injection: The Hidden Threat Breaking Modern AI Systems</h3>
+          <p class="text-sm text-slate-400 mt-1">Deep dive into how indirect prompt injection works, real-world examples, and why OWASP's 2025 LLM Top 10 places it as the #1 emerging AI risk.</p>
+          <span class="text-xs text-slate-500 mt-2 inline-block">Lakera Blog</span>
+        </a>
+        <a href="https://embracethered.com" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">Embrace The Red — Johann Rehberger's Security Blog</h3>
+          <p class="text-sm text-slate-400 mt-1">Pioneering research blog on AI agent security, featuring practical demonstrations of prompt injection, data exfiltration, and tool abuse in production AI systems.</p>
+          <span class="text-xs text-slate-500 mt-2 inline-block">Blog</span>
+        </a>
+        <a href="https://llmsecurity.net" target="_blank" class="block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors group">
+          <h3 class="font-semibold group-hover:text-red-400 transition-colors">LLM Security — Community Resource Hub</h3>
+          <p class="text-sm text-slate-400 mt-1">Aggregated resources, news, and research on LLM and AI agent security topics.</p>
+          <span class="text-xs text-slate-500 mt-2 inline-block">Community</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 text-center">
+      <p class="text-slate-400 mb-4">Know a resource that should be listed here?</p>
+      <a href="https://github.com/cgyagenticloud/troyskills/issues/new?title=[RESOURCE]%20" target="_blank" class="inline-flex items-center gap-2 px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium rounded-lg transition-colors border border-slate-700 text-sm">
+        Suggest a Resource →
+      </a>
+    </div>
+  </section>
+</Layout>
