@@ -1,0 +1,57 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="About — TroySkills">
+  <section class="max-w-3xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold mb-6">About TroySkills</h1>
+
+    <div class="prose prose-invert prose-red max-w-none prose-p:text-slate-300 prose-headings:text-slate-100 prose-a:text-red-400 prose-strong:text-slate-200">
+      <p>
+        <strong>TroySkills</strong> is a public database of malicious AI agent skill patterns.
+        Think of it as <strong>CVE/NVD for the AI agent ecosystem</strong>.
+      </p>
+
+      <h2>Why This Exists</h2>
+      <p>
+        AI agents are becoming more capable and more autonomous. They install skills, run code, 
+        access APIs, send messages, and manage infrastructure. This power creates a new attack 
+        surface: <strong>malicious skills</strong>.
+      </p>
+      <p>
+        A malicious skill can hijack an agent's behavior, steal credentials, exfiltrate data, 
+        or compromise the host system — all while appearing to provide legitimate functionality.
+      </p>
+      <p>
+        The security community has CVE for software vulnerabilities and NVD for their analysis. 
+        But there's no equivalent for AI agent skills. <strong>TroySkills fills that gap.</strong>
+      </p>
+
+      <h2>What We Track</h2>
+      <p>We document attack patterns across 7 categories:</p>
+      <ul>
+        <li><strong>P1 — Prompt Injection:</strong> Skills that override agent system prompts</li>
+        <li><strong>P2 — Data Exfiltration:</strong> Skills that steal data and credentials</li>
+        <li><strong>P3 — Privilege Escalation:</strong> Skills that gain elevated access</li>
+        <li><strong>P4 — Malicious Scripts:</strong> Skills containing malware</li>
+        <li><strong>P5 — Config Tampering:</strong> Skills that poison agent configuration</li>
+        <li><strong>P6 — Social Engineering:</strong> Skills that abuse messaging capabilities</li>
+        <li><strong>P7 — Supply Chain:</strong> Skills that exploit the distribution chain</li>
+      </ul>
+
+      <h2>How to Contribute</h2>
+      <p>
+        TroySkills is open source. Report new attack patterns, submit pull requests, 
+        or help improve existing entries on 
+        <a href="https://github.com/cgyagenticloud/troyskills">GitHub</a>.
+      </p>
+
+      <h2>Disclaimer</h2>
+      <p>
+        This database is for <strong>defensive security research only</strong>. 
+        All attack patterns are documented to help the community build better defenses. 
+        Do not use this information for malicious purposes.
+      </p>
+    </div>
+  </section>
+</Layout>

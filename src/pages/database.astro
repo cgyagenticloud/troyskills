@@ -1,0 +1,61 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const skills = await getCollection('skills');
+const sorted = skills.sort((a, b) => a.data.id.localeCompare(b.data.id));
+---
+
+<Layout title="Database — TroySkills">
+  <section class="max-w-6xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold mb-2">Attack Pattern Database</h1>
+    <p class="text-slate-400 mb-8">All documented malicious AI agent skill patterns.</p>
+
+    <!-- Search -->
+    <div class="mb-8">
+      <input
+        type="text"
+        id="search"
+        placeholder="Search patterns... (e.g., prompt injection, exfiltration)"
+        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-slate-100 placeholder-slate-500 focus:border-red-500 focus:outline-none"
+      />
+    </div>
+
+    <!-- Table -->
+    <div class="space-y-3" id="skill-list">
+      {sorted.map(skill => (
+        <a href={`/skill/${skill.data.id}`} class="skill-item block bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition-colors"
+           data-search={`${skill.data.id} ${skill.data.title} ${skill.data.category} ${skill.data.description} ${(skill.data.tags || []).join(' ')}`.toLowerCase()}>
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <span class="text-xs font-mono text-red-400 mr-3">{skill.data.id}</span>
+              <span class="font-semibold">{skill.data.title}</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class={`text-xs px-2 py-1 rounded-full ${
+                skill.data.severity === 'Critical' ? 'bg-red-500/20 text-red-400' :
+                skill.data.severity === 'High' ? 'bg-orange-500/20 text-orange-400' :
+                'bg-yellow-500/20 text-yellow-400'
+              }`}>{skill.data.severity}</span>
+              <span class="text-xs bg-slate-800 px-2 py-1 rounded-full">{skill.data.category}</span>
+              <span class="text-xs text-slate-500">{skill.data.date}</span>
+            </div>
+          </div>
+          <p class="text-sm text-slate-400 mt-2">{skill.data.description}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <script>
+    const search = document.getElementById('search') as HTMLInputElement;
+    const items = document.querySelectorAll('.skill-item');
+    search?.addEventListener('input', () => {
+      const q = search.value.toLowerCase().trim();
+      items.forEach(item => {
+        const data = (item as HTMLElement).dataset.search || '';
+        (item as HTMLElement).style.display = !q || data.includes(q) ? '' : 'none';
+      });
+    });
+  </script>
+</Layout>

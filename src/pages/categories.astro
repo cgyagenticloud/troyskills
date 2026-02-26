@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const skills = await getCollection('skills');
+const categories = [
+  { id: 'P1', name: 'Prompt Injection', icon: '💉', desc: 'Skills that inject malicious instructions into agent prompts, overriding system behavior.' },
+  { id: 'P2', name: 'Data Exfiltration', icon: '📤', desc: 'Skills that steal data — credentials, conversations, files — and send them to attackers.' },
+  { id: 'P3', name: 'Privilege Escalation', icon: '🔓', desc: 'Skills that trick agents into running commands with elevated system privileges.' },
+  { id: 'P4', name: 'Malicious Scripts', icon: '🐍', desc: 'Skills containing malware — reverse shells, backdoors, keyloggers, cryptominers.' },
+  { id: 'P5', name: 'Config Tampering', icon: '⚙️', desc: 'Skills that modify agent configuration for persistent compromise.' },
+  { id: 'P6', name: 'Social Engineering', icon: '🎭', desc: 'Skills that abuse agent messaging to phish, scam, or impersonate users.' },
+  { id: 'P7', name: 'Supply Chain', icon: '📦', desc: 'Skills that exploit the distribution and dependency chain of the skill ecosystem.' },
+];
+---
+
+<Layout title="Categories — TroySkills">
+  <section class="max-w-6xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold mb-2">Attack Categories</h1>
+    <p class="text-slate-400 mb-10">Seven categories of malicious AI agent skill patterns.</p>
+
+    <div class="space-y-8">
+      {categories.map(cat => {
+        const catSkills = skills.filter(s => s.data.category === cat.id);
+        return (
+          <div id={cat.id} class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="text-3xl">{cat.icon}</span>
+              <div>
+                <h2 class="text-xl font-bold">{cat.id}: {cat.name}</h2>
+                <p class="text-slate-400 text-sm">{cat.desc}</p>
+              </div>
+            </div>
+            {catSkills.length > 0 ? (
+              <div class="space-y-2 ml-12">
+                {catSkills.map(skill => (
+                  <a href={`/skill/${skill.data.id}`} class="block bg-slate-900 border border-slate-800 rounded-lg p-4 hover:border-red-500/50 transition-colors">
+                    <span class="text-xs font-mono text-red-400 mr-2">{skill.data.id}</span>
+                    <span class="font-medium">{skill.data.title}</span>
+                    <span class={`ml-3 text-xs px-2 py-0.5 rounded-full ${
+                      skill.data.severity === 'Critical' ? 'bg-red-500/20 text-red-400' :
+                      'bg-orange-500/20 text-orange-400'
+                    }`}>{skill.data.severity}</span>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p class="ml-12 text-slate-600 text-sm italic">No patterns documented yet.</p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  </section>
+</Layout>

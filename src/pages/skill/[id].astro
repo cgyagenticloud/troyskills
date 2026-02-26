@@ -1,0 +1,58 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const skills = await getCollection('skills');
+  return skills.map(skill => ({
+    params: { id: skill.data.id },
+    props: { skill },
+  }));
+}
+
+const { skill } = Astro.props;
+const { Content } = await render(skill);
+
+const categoryNames: Record<string, string> = {
+  P1: 'Prompt Injection',
+  P2: 'Data Exfiltration',
+  P3: 'Privilege Escalation',
+  P4: 'Malicious Scripts',
+  P5: 'Config Tampering',
+  P6: 'Social Engineering',
+  P7: 'Supply Chain',
+};
+---
+
+<Layout title={`${skill.data.id}: ${skill.data.title} — TroySkills`}>
+  <article class="max-w-4xl mx-auto px-4 py-12">
+    <a href="/database" class="text-sm text-slate-500 hover:text-red-400 transition-colors mb-6 inline-block">← Back to Database</a>
+
+    <div class="mb-8">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-sm font-mono text-red-400 bg-red-500/10 px-2 py-1 rounded">{skill.data.id}</span>
+        <span class={`text-xs px-2 py-1 rounded-full ${
+          skill.data.severity === 'Critical' ? 'bg-red-500/20 text-red-400' :
+          skill.data.severity === 'High' ? 'bg-orange-500/20 text-orange-400' :
+          'bg-yellow-500/20 text-yellow-400'
+        }`}>{skill.data.severity}</span>
+        <span class="text-xs bg-slate-800 px-2 py-1 rounded-full">{skill.data.category}: {categoryNames[skill.data.category]}</span>
+      </div>
+      <h1 class="text-3xl font-bold mb-3">{skill.data.title}</h1>
+      <p class="text-slate-400">{skill.data.description}</p>
+      <div class="flex gap-2 mt-4">
+        {skill.data.tags?.map((tag: string) => (
+          <span class="text-xs bg-slate-800 text-slate-400 px-2 py-1 rounded">#{tag}</span>
+        ))}
+      </div>
+      <div class="text-xs text-slate-600 mt-3">Published: {skill.data.date}</div>
+    </div>
+
+    <div class="prose prose-invert prose-red max-w-none
+      prose-headings:text-slate-100 prose-p:text-slate-300
+      prose-code:text-red-400 prose-pre:bg-slate-900 prose-pre:border prose-pre:border-slate-800
+      prose-a:text-red-400 prose-strong:text-slate-200">
+      <Content />
+    </div>
+  </article>
+</Layout>
