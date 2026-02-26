@@ -1,0 +1,44 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="404 — Page Exfiltrated | TroySkills" description="This page has been exfiltrated by a malicious skill.">
+  <section class="max-w-3xl mx-auto px-4 py-24 text-center">
+    <div class="relative inline-block mb-8">
+      <span class="text-[120px] leading-none opacity-90">🕵️</span>
+      <span class="absolute -top-2 -right-4 text-4xl animate-pulse">💨</span>
+    </div>
+
+    <h1 class="text-6xl font-extrabold mb-4 tracking-tight">
+      <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">404</span>
+    </h1>
+
+    <div class="bg-slate-900 border border-red-500/30 rounded-lg p-6 mb-8 font-mono text-sm text-left max-w-lg mx-auto">
+      <p class="text-red-400 mb-2">⚠️  TROJAN SKILL ALERT</p>
+      <p class="text-slate-400">
+        <span class="text-slate-600">$</span> curl troyskills.ai<span class="text-yellow-400">{Astro.url.pathname}</span><br/>
+        <span class="text-red-400">ERROR:</span> Page not found.<br/>
+        <span class="text-slate-500"># This page has been exfiltrated by a</span><br/>
+        <span class="text-slate-500"># malicious skill. Or maybe it never existed.</span><br/>
+        <span class="text-slate-500"># Either way, the attacker wins this round.</span>
+      </p>
+    </div>
+
+    <p class="text-slate-400 text-lg mb-8">
+      The page you're looking for has been <span class="text-red-400 font-semibold">exfiltrated</span>, <span class="text-orange-400 font-semibold">obfuscated</span>, or simply doesn't exist.
+    </p>
+
+    <div class="flex justify-center gap-4 flex-wrap">
+      <a href="/" class="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold rounded-lg transition-all shadow-lg shadow-red-500/20">
+        🛡️ Return to Safety
+      </a>
+      <a href="/database" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-lg transition-colors border border-slate-700">
+        📋 Browse Database
+      </a>
+    </div>
+
+    <p class="text-slate-600 text-xs mt-12 font-mono">
+      Incident logged as TS-2026-0404 • Severity: Embarrassing • Category: P0 — Page Loss
+    </p>
+  </section>
+</Layout>
