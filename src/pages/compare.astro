@@ -1,0 +1,109 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import { getCollection } from 'astro:content';
+
+const skills = await getCollection('skills');
+const compareData = skills.map(s => ({
+  id: s.data.id,
+  title: s.data.title,
+  category: s.data.category,
+  severity: s.data.severity,
+  description: s.data.description,
+  tags: s.data.tags,
+  date: s.data.date,
+}));
+---
+
+<Layout title="Compare Patterns — TroySkills" description="Compare two TroySkills attack patterns side by side.">
+  <section class="max-w-6xl mx-auto px-4 py-12">
+    <Breadcrumb items={[{ label: "Compare Patterns" }]} />
+    <h1 class="text-3xl font-bold mb-2">Compare Patterns</h1>
+    <p class="text-slate-400 mb-8">Select two patterns to compare side by side. Use dropdowns or URL params <code class="text-xs bg-slate-800 px-1.5 py-0.5 rounded">?a=TS-2026-0001&b=TS-2026-0002</code></p>
+
+    <div class="grid md:grid-cols-2 gap-4 mb-8">
+      <div>
+        <label class="block text-sm font-medium text-slate-400 mb-2">Pattern A</label>
+        <select id="select-a" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-sm text-slate-200 focus:border-red-500 focus:outline-none">
+          <option value="">Select a pattern…</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-400 mb-2">Pattern B</label>
+        <select id="select-b" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-sm text-slate-200 focus:border-red-500 focus:outline-none">
+          <option value="">Select a pattern…</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="comparison" class="grid md:grid-cols-2 gap-6" style="display:none;">
+      <div id="card-a" class="bg-slate-900 border border-slate-800 rounded-xl p-6"></div>
+      <div id="card-b" class="bg-slate-900 border border-slate-800 rounded-xl p-6"></div>
+    </div>
+    <div id="empty-state" class="text-center py-16 text-slate-600">
+      <span class="text-5xl mb-4 block">⚖️</span>
+      <p class="text-lg">Select two patterns above to compare them.</p>
+    </div>
+  </section>
+
+  <script is:inline define:vars={{ compareData }}>
+    const data = compareData;
+    const byId = Object.fromEntries(data.map(d => [d.id, d]));
+
+    const catNames = { P1:'Prompt Injection', P2:'Data Exfiltration', P3:'Privilege Escalation', P4:'Malicious Scripts', P5:'Config Tampering', P6:'Social Engineering', P7:'Supply Chain' };
+    const sevColors = { Critical:'bg-red-500/20 text-red-400', High:'bg-orange-500/20 text-orange-400', Medium:'bg-yellow-500/20 text-yellow-400', Low:'bg-blue-500/20 text-blue-400' };
+
+    function renderCard(el, skill) {
+      if (!skill) { el.innerHTML = '<p class="text-slate-500 text-center py-8">No pattern selected</p>'; return; }
+      el.innerHTML = `
+        <div class="mb-4">
+          <span class="text-xs font-mono text-red-400">${skill.id}</span>
+          <span class="ml-2 text-xs px-2 py-0.5 rounded-full ${sevColors[skill.severity] || ''}">${skill.severity}</span>
+        </div>
+        <h3 class="text-xl font-bold mb-3">${skill.title}</h3>
+        <div class="space-y-3 text-sm">
+          <div><span class="text-slate-500">Category:</span> <span class="text-slate-300">${skill.category} — ${catNames[skill.category] || skill.category}</span></div>
+          <div><span class="text-slate-500">Date:</span> <span class="text-slate-300">${skill.date}</span></div>
+          <div><span class="text-slate-500">Description:</span><p class="text-slate-300 mt-1">${skill.description}</p></div>
+          <div><span class="text-slate-500">Tags:</span>
+            <div class="flex flex-wrap gap-1.5 mt-1">${(skill.tags||[]).map(t => `<span class="px-2 py-0.5 bg-slate-800 text-slate-400 rounded text-xs">${t}</span>`).join('')}</div>
+          </div>
+          <a href="/skill/${skill.id}" class="inline-block mt-3 text-red-400 hover:text-red-300 text-sm transition-colors">View full details →</a>
+        </div>
+      `;
+    }
+
+    function update() {
+      const a = document.getElementById('select-a').value;
+      const b = document.getElementById('select-b').value;
+      const comp = document.getElementById('comparison');
+      const empty = document.getElementById('empty-state');
+      if (a || b) { comp.style.display = ''; empty.style.display = 'none'; }
+      else { comp.style.display = 'none'; empty.style.display = ''; }
+      renderCard(document.getElementById('card-a'), byId[a]);
+      renderCard(document.getElementById('card-b'), byId[b]);
+      const url = new URL(window.location);
+      if (a) url.searchParams.set('a', a); else url.searchParams.delete('a');
+      if (b) url.searchParams.set('b', b); else url.searchParams.delete('b');
+      history.replaceState(null, '', url);
+    }
+
+    // Populate selects
+    ['select-a','select-b'].forEach(id => {
+      const sel = document.getElementById(id);
+      data.sort((x,y) => x.id.localeCompare(y.id)).forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        opt.textContent = `${d.id} — ${d.title}`;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener('change', update);
+    });
+
+    // Read URL params
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('a')) document.getElementById('select-a').value = params.get('a');
+    if (params.get('b')) document.getElementById('select-b').value = params.get('b');
+    if (params.get('a') || params.get('b')) update();
+  </script>
+</Layout>
