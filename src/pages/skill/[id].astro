@@ -29,8 +29,10 @@ const categoryNames: Record<string, string> = {
     <a href="/database" class="text-sm text-slate-500 hover:text-red-400 transition-colors mb-6 inline-block">← Back to Database</a>
 
     <div class="mb-8">
-      <div class="flex items-center gap-3 mb-3">
-        <span class="text-sm font-mono text-red-400 bg-red-500/10 px-2 py-1 rounded">{skill.data.id}</span>
+      <div class="flex items-center gap-3 mb-3 flex-wrap">
+        <button class="copy-id-btn text-sm font-mono text-red-400 bg-red-500/10 px-2 py-1 rounded cursor-pointer hover:bg-red-500/20 transition-colors" data-id={skill.data.id} title="Click to copy ID">
+          {skill.data.id} 📋
+        </button>
         <span class={`text-xs px-2 py-1 rounded-full ${
           skill.data.severity === 'Critical' ? 'bg-red-500/20 text-red-400' :
           skill.data.severity === 'High' ? 'bg-orange-500/20 text-orange-400' :
@@ -45,7 +47,15 @@ const categoryNames: Record<string, string> = {
           <span class="text-xs bg-slate-800 text-slate-400 px-2 py-1 rounded">#{tag}</span>
         ))}
       </div>
-      <div class="text-xs text-slate-600 mt-3">Published: {skill.data.date}</div>
+      <div class="flex items-center gap-4 mt-4 text-xs text-slate-600">
+        <span>Published: {skill.data.date}</span>
+        <button class="share-btn inline-flex items-center gap-1 text-slate-500 hover:text-red-400 transition-colors cursor-pointer" data-title={`${skill.data.id}: ${skill.data.title}`} data-url={`https://troyskills.ai/skill/${skill.data.id}`}>
+          🔗 Share
+        </button>
+        <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${skill.data.id}: ${skill.data.title} — AI Agent Attack Pattern`)}&url=${encodeURIComponent(`https://troyskills.ai/skill/${skill.data.id}`)}`} target="_blank" class="text-slate-500 hover:text-red-400 transition-colors">
+          𝕏 Tweet
+        </a>
+      </div>
     </div>
 
     <div class="prose prose-invert prose-red max-w-none
@@ -55,4 +65,36 @@ const categoryNames: Record<string, string> = {
       <Content />
     </div>
   </article>
+
+  <script>
+    // Copy ID to clipboard
+    document.querySelectorAll('.copy-id-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = (btn as HTMLElement).dataset.id;
+        if (id) {
+          await navigator.clipboard.writeText(id);
+          const original = btn.textContent;
+          btn.textContent = '✓ Copied!';
+          setTimeout(() => { btn.textContent = original; }, 1500);
+        }
+      });
+    });
+
+    // Share button
+    document.querySelectorAll('.share-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const el = btn as HTMLElement;
+        const title = el.dataset.title || '';
+        const url = el.dataset.url || '';
+        if (navigator.share) {
+          await navigator.share({ title, url });
+        } else {
+          await navigator.clipboard.writeText(url);
+          const original = btn.innerHTML;
+          btn.textContent = '✓ Link copied!';
+          setTimeout(() => { btn.innerHTML = original; }, 1500);
+        }
+      });
+    });
+  </script>
 </Layout>

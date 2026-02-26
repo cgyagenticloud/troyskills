@@ -43,7 +43,11 @@ const canonicalUrl = new URL(Astro.url.pathname, 'https://troyskills.ai');
           <span class="text-2xl">🛡️</span>
           <span class="tracking-tight">Troy<span class="text-red-500">Skills</span><span class="text-xs text-slate-500 ml-1">.ai</span></span>
         </a>
-        <div class="flex items-center gap-6 text-sm">
+        <!-- Mobile menu button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-400 hover:text-slate-200">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div id="nav-links" class="hidden md:flex items-center gap-6 text-sm">
           <a href="/database" class="hover:text-red-400 transition-colors">Database</a>
           <a href="/categories" class="hover:text-red-400 transition-colors">Categories</a>
           <a href="/threat-model" class="hover:text-red-400 transition-colors">Threat Model</a>
@@ -53,6 +57,26 @@ const canonicalUrl = new URL(Astro.url.pathname, 'https://troyskills.ai');
           <a href="/contribute" class="hover:text-red-400 transition-colors">Contribute</a>
           <a href="/about" class="hover:text-red-400 transition-colors">About</a>
           <a href="https://github.com/cgyagenticloud/troyskills" target="_blank" class="hover:text-red-400 transition-colors">GitHub</a>
+          <!-- Dark/Light toggle -->
+          <button id="theme-toggle" class="p-2 rounded-lg hover:bg-slate-800 transition-colors" title="Toggle dark/light mode">
+            <span id="theme-icon-dark" class="hidden">🌙</span>
+            <span id="theme-icon-light" class="hidden">☀️</span>
+          </button>
+        </div>
+      </div>
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 px-4 py-4">
+        <div class="flex flex-col gap-3 text-sm">
+          <a href="/database" class="hover:text-red-400 transition-colors">Database</a>
+          <a href="/categories" class="hover:text-red-400 transition-colors">Categories</a>
+          <a href="/threat-model" class="hover:text-red-400 transition-colors">Threat Model</a>
+          <a href="/scoring" class="hover:text-red-400 transition-colors">Scoring</a>
+          <a href="/timeline" class="hover:text-red-400 transition-colors">Timeline</a>
+          <a href="/defense" class="hover:text-red-400 transition-colors">Defense</a>
+          <a href="/contribute" class="hover:text-red-400 transition-colors">Contribute</a>
+          <a href="/about" class="hover:text-red-400 transition-colors">About</a>
+          <a href="https://github.com/cgyagenticloud/troyskills" target="_blank" class="hover:text-red-400 transition-colors">GitHub</a>
+          <button id="theme-toggle-mobile" class="text-left hover:text-red-400 transition-colors">Toggle Theme 🌓</button>
         </div>
       </div>
     </nav>
@@ -67,5 +91,43 @@ const canonicalUrl = new URL(Astro.url.pathname, 'https://troyskills.ai');
         <p class="mt-1">Protecting the AI agent ecosystem, one skill at a time.</p>
       </div>
     </footer>
+    <script is:inline>
+      // Theme toggle
+      function updateThemeIcons() {
+        const isDark = document.documentElement.classList.contains('dark');
+        const darkIcons = document.querySelectorAll('#theme-icon-dark');
+        const lightIcons = document.querySelectorAll('#theme-icon-light');
+        darkIcons.forEach(el => el.classList.toggle('hidden', isDark));
+        lightIcons.forEach(el => el.classList.toggle('hidden', !isDark));
+      }
+      
+      function toggleTheme() {
+        const html = document.documentElement;
+        const isDark = html.classList.contains('dark');
+        if (isDark) {
+          html.classList.remove('dark');
+          localStorage.setItem('theme', 'light');
+        } else {
+          html.classList.add('dark');
+          localStorage.setItem('theme', 'dark');
+        }
+        updateThemeIcons();
+      }
+
+      // Restore theme from localStorage
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark');
+      }
+      updateThemeIcons();
+
+      document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+      document.getElementById('theme-toggle-mobile')?.addEventListener('click', toggleTheme);
+
+      // Mobile menu
+      document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
+        document.getElementById('mobile-menu')?.classList.toggle('hidden');
+      });
+    </script>
   </body>
 </html>
