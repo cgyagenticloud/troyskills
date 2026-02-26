@@ -1,0 +1,84 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+
+const glossary = [
+  { term: "AI Agent", definition: "An autonomous software system powered by a large language model that can perceive its environment, make decisions, and take actions using tools and APIs to accomplish goals.", patterns: ["TS-2026-0001", "TS-2026-0003"] },
+  { term: "Agentic AI", definition: "AI systems that operate with a degree of autonomy, making decisions and executing multi-step workflows without continuous human oversight. Agentic AI amplifies both capabilities and attack surfaces.", patterns: ["TS-2026-0030", "TS-2026-0107"] },
+  { term: "Attack Surface", definition: "The total set of points where an attacker can try to enter or extract data from an AI agent system. Includes prompts, tools, plugins, APIs, configuration files, and connected services.", patterns: ["TS-2026-0063"] },
+  { term: "Chain of Thought (CoT)", definition: "A prompting technique where the LLM is asked to reason step-by-step. Attackers can exploit CoT to make the model rationalize malicious actions.", patterns: ["TS-2026-0052"] },
+  { term: "Command Injection", definition: "An attack where malicious commands are inserted into inputs that are passed to a system shell or command interpreter for execution.", patterns: ["TS-2026-0004", "TS-2026-0101"] },
+  { term: "Context Window", definition: "The maximum amount of text (tokens) an LLM can process in a single interaction. Attackers exploit context windows to inject instructions or exfiltrate data within the model's memory.", patterns: ["TS-2026-0002"] },
+  { term: "Cross-Plugin Request Forgery (XPRF)", definition: "An attack that chains multiple AI agent plugins together via prompt injection, using one plugin's capabilities to trigger unauthorized actions in another.", patterns: ["TS-2026-0106"] },
+  { term: "CSRF (Cross-Site Request Forgery)", definition: "A web attack where a malicious site triggers actions on a different site where the user is authenticated. In AI contexts, CSRF can target local MCP tool endpoints.", patterns: ["TS-2026-0105"] },
+  { term: "CVE (Common Vulnerabilities and Exposures)", definition: "A standardized identifier for publicly known cybersecurity vulnerabilities. AI agent CVEs include CVE-2025-53773 (Copilot RCE) and CVE-2024-5184 (EmailGPT injection).", patterns: ["TS-2026-0101", "TS-2026-0102"] },
+  { term: "Data Exfiltration", definition: "The unauthorized transfer of data from an AI agent or its connected services to an attacker-controlled destination. Methods include encoded URLs, steganography, and covert tool invocations.", patterns: ["TS-2026-0002", "TS-2026-0015", "TS-2026-0103"] },
+  { term: "Data Poisoning", definition: "Corrupting training data, fine-tuning datasets, or RAG knowledge bases to influence model behavior in attacker-desired ways.", patterns: ["TS-2026-0005", "TS-2026-0108"] },
+  { term: "Defense in Depth", definition: "A security strategy using multiple layers of protection so that if one defense fails, others still protect the system. Essential for AI agent security.", patterns: [] },
+  { term: "Direct Prompt Injection", definition: "An attack where the user directly provides malicious instructions to the LLM, attempting to override system prompts or bypass safety guardrails.", patterns: ["TS-2026-0001"] },
+  { term: "Function Calling", definition: "The capability of an LLM to invoke external functions or tools based on natural language instructions. A key enabler of agentic AI — and a primary attack vector.", patterns: ["TS-2026-0003", "TS-2026-0004"] },
+  { term: "Guardrails", definition: "Safety mechanisms (input filters, output validators, policy enforcers) designed to constrain LLM behavior within acceptable boundaries. Guardrails can be bypassed via sophisticated prompt injection.", patterns: ["TS-2026-0001", "TS-2026-0052"] },
+  { term: "Hallucination", definition: "When an LLM generates confident but factually incorrect information. Attackers can weaponize hallucinations via data poisoning to create targeted misinformation.", patterns: ["TS-2026-0108"] },
+  { term: "Indirect Prompt Injection", definition: "An attack where malicious instructions are embedded in external content (emails, documents, web pages) that the AI agent processes, causing it to follow attacker instructions without the user's knowledge.", patterns: ["TS-2026-0015", "TS-2026-0103"] },
+  { term: "Jailbreak", definition: "A technique to bypass an LLM's safety restrictions and content policies, causing it to generate prohibited content or perform restricted actions. A subset of prompt injection focused on policy bypass.", patterns: ["TS-2026-0001", "TS-2026-0052"] },
+  { term: "LLM (Large Language Model)", definition: "A neural network trained on vast text corpora that can understand and generate human language. The core reasoning engine of AI agents. Examples: GPT-4, Claude, Gemini, Llama.", patterns: [] },
+  { term: "MCP (Model Context Protocol)", definition: "An open protocol (developed by Anthropic) that standardizes how AI agents connect to external tools and data sources. MCP servers expose tools; MCP clients (agents) invoke them. Creates new attack surfaces.", patterns: ["TS-2026-0063", "TS-2026-0104", "TS-2026-0109", "TS-2026-0110"] },
+  { term: "MCP Server", definition: "A service that exposes tools and data to AI agents via the Model Context Protocol. Malicious or compromised MCP servers are a primary supply chain attack vector.", patterns: ["TS-2026-0063", "TS-2026-0104"] },
+  { term: "MCP Tool Poisoning", definition: "An attack where a malicious MCP tool definition contains hidden instructions that influence agent behavior, or where a tool's implementation secretly exfiltrates data or performs unauthorized actions.", patterns: ["TS-2026-0109", "TS-2026-0110"] },
+  { term: "OWASP Top 10 for LLMs", definition: "A list maintained by OWASP identifying the top 10 security risks for LLM applications. Prompt injection is ranked #1. OWASP also maintains an MCP Top 10.", patterns: [] },
+  { term: "Plugin", definition: "An extension that adds capabilities to an AI agent (web browsing, code execution, API access). Plugins are a key attack vector — malicious plugins can exfiltrate data or escalate privileges.", patterns: ["TS-2026-0007", "TS-2026-0106"] },
+  { term: "Privilege Escalation", definition: "An attack where a skill or injection causes an AI agent to perform actions beyond its intended permission level, such as accessing admin APIs or executing system commands.", patterns: ["TS-2026-0003", "TS-2026-0107"] },
+  { term: "Prompt Injection", definition: "The #1 AI security risk. An attack that manipulates natural language inputs to override an AI agent's instructions, bypass safety controls, or cause unintended actions. Includes direct and indirect variants.", patterns: ["TS-2026-0001", "TS-2026-0101", "TS-2026-0102"] },
+  { term: "RAG (Retrieval-Augmented Generation)", definition: "A technique where an LLM retrieves relevant documents from a knowledge base before generating responses. RAG corpora can be poisoned to inject misinformation.", patterns: ["TS-2026-0005", "TS-2026-0108"] },
+  { term: "RCE (Remote Code Execution)", definition: "A vulnerability that allows an attacker to execute arbitrary code on a target system remotely. In AI contexts, prompt injection can escalate to RCE when agents have code execution capabilities.", patterns: ["TS-2026-0004", "TS-2026-0101", "TS-2026-0104", "TS-2026-0105"] },
+  { term: "Red Team", definition: "A group that simulates adversarial attacks against AI systems to identify vulnerabilities. AI red teaming includes prompt injection testing, jailbreak attempts, and tool abuse scenarios.", patterns: [] },
+  { term: "Skill", definition: "In TroySkills terminology, a capability module installed into an AI agent. Malicious skills are the primary threat vector cataloged in this database — they abuse the trust agents place in their installed capabilities.", patterns: ["TS-2026-0001", "TS-2026-0007"] },
+  { term: "Social Engineering", definition: "Manipulating AI agents through psychological techniques — flattery, urgency, authority claims — to bypass safety restrictions or perform unauthorized actions.", patterns: ["TS-2026-0052", "TS-2026-0006"] },
+  { term: "Supply Chain Attack", definition: "Compromising an AI agent by attacking its dependencies: malicious skills, poisoned MCP servers, backdoored plugins, or corrupted training data. The AI equivalent of software supply chain attacks.", patterns: ["TS-2026-0007", "TS-2026-0104", "TS-2026-0110"] },
+  { term: "System Prompt", definition: "The initial instructions given to an LLM that define its role, behavior, and constraints. System prompt theft and override are core attack techniques.", patterns: ["TS-2026-0001", "TS-2026-0102"] },
+  { term: "Token", definition: "The basic unit of text processing for LLMs (roughly 3/4 of a word). Context window size is measured in tokens. Token limits affect how much injected content can influence agent behavior.", patterns: [] },
+  { term: "Tool", definition: "An external function or API that an AI agent can invoke to perform actions (read files, query databases, send emails, execute code). Tools transform prompt injection from information leaks into active exploits.", patterns: ["TS-2026-0003", "TS-2026-0004"] },
+  { term: "Tool Redefinition", definition: "An attack in multi-MCP-server environments where a malicious server registers a tool with the same name as a legitimate one, shadowing it and intercepting all invocations.", patterns: ["TS-2026-0110"] },
+  { term: "Troy Skill", definition: "Named after the Trojan Horse — a malicious AI agent skill that appears legitimate but contains hidden attack capabilities. The namesake concept of the TroySkills database.", patterns: [] },
+  { term: "Zero-Click Attack", definition: "An attack requiring no user interaction. In AI contexts, indirect prompt injection in emails or documents can trigger data exfiltration without the user doing anything.", patterns: ["TS-2026-0103"] },
+];
+
+const alphabet = [...new Set(glossary.map(g => g.term[0].toUpperCase()))].sort();
+---
+
+<Layout title="Glossary — TroySkills" description="Definitions of key terms in AI agent security: prompt injection, MCP, RAG, jailbreak, red team, and 30+ more terms linked to attack patterns.">
+  <section class="max-w-4xl mx-auto px-4 py-12">
+    <Breadcrumb items={[{ label: "Glossary" }]} />
+    <h1 class="text-3xl font-bold mb-3">Glossary</h1>
+    <p class="text-slate-400 mb-6">{glossary.length} terms used throughout the TroySkills database, linked to relevant attack patterns.</p>
+
+    <!-- Alphabet nav -->
+    <div class="flex flex-wrap gap-2 mb-8">
+      {alphabet.map(letter => (
+        <a href={`#letter-${letter}`} class="text-xs font-mono text-red-400 hover:text-red-300 bg-slate-800 px-2 py-1 rounded">{letter}</a>
+      ))}
+    </div>
+
+    <!-- Terms -->
+    {alphabet.map(letter => (
+      <div id={`letter-${letter}`} class="mb-8">
+        <h2 class="text-xl font-bold text-red-400 mb-4 border-b border-slate-700 pb-2">{letter}</h2>
+        <div class="space-y-4">
+          {glossary.filter(g => g.term[0].toUpperCase() === letter).map(entry => (
+            <div class="bg-slate-900 border border-slate-700/50 rounded-lg p-4">
+              <h3 class="text-base font-bold text-slate-100 mb-1">{entry.term}</h3>
+              <p class="text-slate-400 text-sm leading-relaxed mb-2">{entry.definition}</p>
+              {entry.patterns.length > 0 && (
+                <div class="flex flex-wrap gap-1">
+                  {entry.patterns.map(p => (
+                    <a href={`/skill/${p}`} class="text-xs font-mono text-red-400 hover:text-red-300 bg-red-500/10 px-2 py-0.5 rounded">{p}</a>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </section>
+</Layout>
