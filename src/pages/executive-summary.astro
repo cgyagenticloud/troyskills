@@ -1,5 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+const skills = await getCollection('skills');
+const totalPatterns = skills.length;
 ---
 
 <Layout title="Executive Summary — TroySkills" description="One-page executive brief on AI agent security threats. Printable infographic with key statistics, top threats, and recommended actions.">
@@ -28,7 +31,7 @@ import Layout from '../layouts/Layout.astro';
     <!-- 3 KEY STATS — Large Font Hero Numbers -->
     <div class="grid grid-cols-3 gap-4 print:gap-2 mb-8 print:mb-4">
       <div class="bg-gradient-to-b from-red-500/10 to-transparent border border-red-500/30 rounded-2xl p-5 print:p-3 text-center">
-        <div class="text-5xl print:text-3xl font-black text-red-400 print:text-red-600 leading-none">150</div>
+        <div class="text-5xl print:text-3xl font-black text-red-400 print:text-red-600 leading-none">{totalPatterns}</div>
         <div class="text-xs text-slate-400 print:text-gray-600 mt-2 font-semibold uppercase tracking-wider">Attack Patterns</div>
         <div class="text-[10px] text-slate-500 mt-1">Documented & Classified</div>
       </div>
@@ -50,7 +53,7 @@ import Layout from '../layouts/Layout.astro';
         <span class="text-lg">🌐</span> Threat Landscape
       </h2>
       <p class="text-sm print:text-xs text-slate-400 print:text-gray-600 leading-relaxed">
-        AI agents are becoming the primary interface between humans and digital systems — managing code, finances, healthcare, and infrastructure. As adoption accelerates, so does the attack surface. TroySkills has documented <strong class="text-white print:text-black">150 distinct attack patterns</strong> across 7 categories, revealing that AI agent skills represent an entirely new class of software supply chain risk. Unlike traditional malware, these attacks exploit the <em>trust relationship</em> between agents and their tools, turning helpful capabilities into weapons. Every organization deploying AI agents is exposed.
+        AI agents are becoming the primary interface between humans and digital systems — managing code, finances, healthcare, and infrastructure. As adoption accelerates, so does the attack surface. TroySkills has documented <strong class="text-white print:text-black">{totalPatterns} distinct attack patterns</strong> across 7 categories, revealing that AI agent skills represent an entirely new class of software supply chain risk. Unlike traditional malware, these attacks exploit the <em>trust relationship</em> between agents and their tools, turning helpful capabilities into weapons. Every organization deploying AI agents is exposed.
       </p>
     </div>
 
