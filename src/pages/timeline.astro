@@ -1,0 +1,202 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const skills = await getCollection('skills');
+const sorted = skills.sort((a, b) => a.data.id.localeCompare(b.data.id));
+
+const categoryNames: Record<string, string> = {
+  P1: 'Prompt Injection',
+  P2: 'Data Exfiltration',
+  P3: 'Privilege Escalation',
+  P4: 'Malicious Scripts',
+  P5: 'Config Tampering',
+  P6: 'Social Engineering',
+  P7: 'Supply Chain',
+};
+
+const categoryColors: Record<string, string> = {
+  P1: 'bg-red-500',
+  P2: 'bg-blue-500',
+  P3: 'bg-orange-500',
+  P4: 'bg-purple-500',
+  P5: 'bg-yellow-500',
+  P6: 'bg-pink-500',
+  P7: 'bg-green-500',
+};
+
+const categoryBorders: Record<string, string> = {
+  P1: 'border-red-500/50',
+  P2: 'border-blue-500/50',
+  P3: 'border-orange-500/50',
+  P4: 'border-purple-500/50',
+  P5: 'border-yellow-500/50',
+  P6: 'border-pink-500/50',
+  P7: 'border-green-500/50',
+};
+
+// Group by date
+const byDate: Record<string, typeof sorted> = {};
+for (const skill of sorted) {
+  const d = skill.data.date;
+  if (!byDate[d]) byDate[d] = [];
+  byDate[d].push(skill);
+}
+const dates = Object.keys(byDate).sort().reverse();
+
+// Category counts for filter display
+const categories = ['P1','P2','P3','P4','P5','P6','P7'];
+const catCounts = categories.map(c => ({
+  id: c,
+  name: categoryNames[c],
+  count: skills.filter(s => s.data.category === c).length,
+  color: categoryColors[c],
+}));
+
+// Growth data for the chart
+let cumulative = 0;
+const growthData = dates.sort().map(d => {
+  cumulative += byDate[d].length;
+  return { date: d, added: byDate[d].length, total: cumulative };
+});
+---
+
+<Layout title="Timeline — TroySkills">
+  <section class="max-w-5xl mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold mb-4">📅 Pattern Timeline</h1>
+    <p class="text-slate-400 text-lg mb-8">Visual timeline of when attack patterns were documented, showing the growth of the database over time.</p>
+
+    <!-- Stats bar -->
+    <div class="grid grid-cols-3 gap-4 mb-8">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+        <div class="text-2xl font-bold text-red-500">{skills.length}</div>
+        <div class="text-xs text-slate-500">Total Patterns</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+        <div class="text-2xl font-bold text-red-500">{dates.length}</div>
+        <div class="text-xs text-slate-500">Publication Days</div>
+      </div>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+        <div class="text-2xl font-bold text-red-500">{Math.round(skills.length / Math.max(dates.length, 1))}</div>
+        <div class="text-xs text-slate-500">Avg per Day</div>
+      </div>
+    </div>
+
+    <!-- Growth Chart (simple CSS bar chart) -->
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-8">
+      <h2 class="text-lg font-semibold mb-4">Database Growth</h2>
+      <div class="flex items-end gap-2 h-32">
+        {growthData.map(d => (
+          <div class="flex-1 flex flex-col items-center gap-1" title={`${d.date}: ${d.total} total (+${d.added})`}>
+            <div class="text-xs text-slate-500">{d.total}</div>
+            <div class="w-full bg-gradient-to-t from-red-600 to-red-400 rounded-t" style={`height: ${(d.total / skills.length) * 100}%`}></div>
+            <div class="text-xs text-slate-600 truncate w-full text-center">{d.date.slice(5)}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Category Filter -->
+    <div class="mb-6">
+      <div class="text-xs text-slate-500 uppercase tracking-wider mb-2">Filter by Category</div>
+      <div class="flex flex-wrap gap-2">
+        <button class="tl-filter active text-xs px-3 py-1.5 rounded-full border border-slate-700 bg-slate-800 text-slate-300 hover:border-red-500/50 transition-colors" data-cat="all">All ({skills.length})</button>
+        {catCounts.map(cat => (
+          <button class="tl-filter text-xs px-3 py-1.5 rounded-full border border-slate-700 bg-slate-900 text-slate-400 hover:border-red-500/50 transition-colors" data-cat={cat.id}>
+            {cat.id}: {cat.name} ({cat.count})
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div id="results-count" class="text-sm text-slate-500 mb-6">Showing {skills.length} patterns</div>
+
+    <!-- Timeline -->
+    <div class="relative">
+      <!-- Vertical line -->
+      <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-slate-800"></div>
+
+      {dates.sort().reverse().map(date => (
+        <div class="timeline-date mb-8" data-date={date}>
+          <!-- Date marker -->
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-8 h-8 rounded-full bg-slate-800 border-2 border-red-500 flex items-center justify-center z-10">
+              <div class="w-2 h-2 rounded-full bg-red-500"></div>
+            </div>
+            <div>
+              <span class="font-semibold text-slate-200">{date}</span>
+              <span class="text-sm text-slate-500 ml-2">+{byDate[date].length} pattern{byDate[date].length > 1 ? 's' : ''}</span>
+            </div>
+          </div>
+
+          <!-- Patterns for this date -->
+          <div class="ml-12 space-y-2">
+            {byDate[date].map(skill => (
+              <a href={`/skill/${skill.data.id}`}
+                 class="tl-item block bg-slate-900 border rounded-lg p-4 hover:border-red-500/50 transition-colors {categoryBorders[skill.data.category] || 'border-slate-800'}"
+                 data-cat={skill.data.category}
+                 data-sev={skill.data.severity}>
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                  <div class="flex items-center gap-3">
+                    <span class={`w-2 h-2 rounded-full ${categoryColors[skill.data.category]}`}></span>
+                    <span class="text-xs font-mono text-red-400">{skill.data.id}</span>
+                    <span class="text-sm font-medium">{skill.data.title}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class={`text-xs px-2 py-0.5 rounded-full ${
+                      skill.data.severity === 'Critical' ? 'bg-red-500/20 text-red-400' :
+                      skill.data.severity === 'High' ? 'bg-orange-500/20 text-orange-400' :
+                      'bg-yellow-500/20 text-yellow-400'
+                    }`}>{skill.data.severity}</span>
+                    <span class="text-xs text-slate-600">{skill.data.category}</span>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <script>
+    const filters = document.querySelectorAll('.tl-filter');
+    const items = document.querySelectorAll('.tl-item');
+    const dateGroups = document.querySelectorAll('.timeline-date');
+    const countEl = document.getElementById('results-count');
+
+    let activeCat = 'all';
+
+    function applyFilter() {
+      let visible = 0;
+      items.forEach(item => {
+        const el = item as HTMLElement;
+        const show = activeCat === 'all' || el.dataset.cat === activeCat;
+        el.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+
+      // Hide date groups with no visible items
+      dateGroups.forEach(group => {
+        const el = group as HTMLElement;
+        const visibleItems = el.querySelectorAll('.tl-item:not([style*="display: none"])');
+        el.style.display = visibleItems.length > 0 ? '' : 'none';
+      });
+
+      if (countEl) countEl.textContent = `Showing ${visible} pattern${visible !== 1 ? 's' : ''}`;
+    }
+
+    filters.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filters.forEach(b => {
+          b.classList.remove('active', 'bg-slate-800', 'text-slate-300');
+          b.classList.add('bg-slate-900');
+        });
+        btn.classList.add('active', 'bg-slate-800', 'text-slate-300');
+        btn.classList.remove('bg-slate-900');
+        activeCat = (btn as HTMLElement).dataset.cat || 'all';
+        applyFilter();
+      });
+    });
+  </script>
+</Layout>
